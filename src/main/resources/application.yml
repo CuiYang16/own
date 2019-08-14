@@ -12,6 +12,10 @@ info:
   version: "1.0.0"
 
 spring:
+  resources:
+    static-locations: classpath:/static/
+  mvc:
+    static-path-pattern: /static/**
   profiles:
     include: redis, mongodb
   servlet:

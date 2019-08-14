@@ -14,7 +14,8 @@ public class TestController {
     private MongoTemplate mongoTemplate;
 
     @RequestMapping("/insert")
-    public void test1(){
+    public void test1() {
         this.mongoTemplate.insert(new User("111", "2222"));
     }
+
 }
