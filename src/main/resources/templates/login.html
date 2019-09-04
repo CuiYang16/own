@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="common/scriptInc">
+    <meta charset="UTF-8"/>
+    <title>登录</title>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <div  class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+            <span class="title-content">权限管理系统</span>
+        </div>
+
+    </div>
+<!--    登录-->
+    <div class="layui-row login-block">
+        <div class="layui-col-xs6 layui-col-sm6 layui-col-md4 layui-col-md-offset4 login-content">
+            <div class="layui-card login-card">
+                <div class="layui-card-header">登录</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户名：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="userName" required lay-verify="required" placeholder="请输入用户名"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">密码：</label>
+                            <div class="layui-input-block">
+                                <input type="password" name="passWord" required lay-verify="required"
+                                       placeholder="请输入密码" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="toLogin">登录</button>
+                                    <button class="layui-btn" lay-submit lay-filter="toRegister" type="button"><i class="layui-icon">注册&#xe602;</i></button>
+                                </div>
+                            </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--    注册-->
+    <div class="layui-row register-block">
+        <div class="layui-col-xs6 layui-col-sm6 layui-col-md4 layui-col-md-offset4 register-content">
+            <div class="layui-card login-card">
+                <div class="layui-card-header">注册</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户名：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="userName" required lay-verify="required" placeholder="请输入用户名"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">密码：</label>
+                            <div class="layui-input-block">
+                                <input type="password" name="passWord" required lay-verify="required"
+                                       placeholder="请输入密码" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">确认密码：</label>
+                            <div class="layui-input-block">
+                                <input type="password" name="password" required lay-verify="required"
+                                       placeholder="请输入密码" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">性别</label>
+                            <div class="layui-input-block">
+                                <select name="city" lay-verify="required">
+                                    <option value=""></option>
+                                    <option value="0">男</option>
+                                    <option value="1">女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">出生日期</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="birthday" class="layui-input" id="birthday">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="toLogin"><i class="layui-icon">&#xe603;去登录</i>去登录</button>
+                                <button class="layui-btn" lay-submit lay-filter="toRegister" type="button">注册</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    layui.use(['form','laydate'], function(){
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var $ = layui.$;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#birthday' //指定元素
+            ,type: 'date'
+        });
+        //监听提交
+        form.on('submit(toLogin)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+
+
+</script>
+</body>
+<style>
+    body{
+        background-color: #2F4056;
+    }
+    .login-content{
+        margin-top: 24vh;
+    }
+    .title-content{
+        display: block;
+        font-size: 6vh;
+        color: white;
+        text-align: center;
+        width: 100%;
+    }
+
+    .register-block{
+        margin-top: 24vh;
+        display: none;
+    }
+</style>
+</html>

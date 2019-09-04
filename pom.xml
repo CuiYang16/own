@@ -27,10 +27,18 @@
             <version>3.0</version>
         </dependency>
         <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -88,18 +96,23 @@
             <artifactId>java-jwt</artifactId>
             <version>3.4.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-core -->
+
         <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
-            <version>1.4.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-spring -->
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-spring</artifactId>
-            <version>1.4.0</version>
-        </dependency>
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.apache.shiro/shiro-core &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.shiro</groupId>-->
+<!--            <artifactId>shiro-core</artifactId>-->
+<!--            <version>1.4.0</version>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.apache.shiro/shiro-spring &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.shiro</groupId>-->
+<!--            <artifactId>shiro-spring</artifactId>-->
+<!--            <version>1.4.0</version>-->
+<!--        </dependency>-->
         <!--redis-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -119,6 +132,25 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+<!--        使 Thymeleaf 可以解析非严格XML格式的文档-->
+        <dependency>
+        <groupId>net.sourceforge.nekohtml</groupId>
+        <artifactId>nekohtml</artifactId>
+        <version>1.9.22</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+
         </dependency>
     </dependencies>
 

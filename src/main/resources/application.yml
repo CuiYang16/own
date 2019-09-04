@@ -12,10 +12,12 @@ info:
   version: "1.0.0"
 
 spring:
-  resources:
-    static-locations: classpath:/static/
-  mvc:
-    static-path-pattern: /static/**
+  thymeleaf:
+    mode: LEGACYHTML5
+#  resources:
+#    static-locations: classpath:/static/
+#  mvc:
+#    static-path-pattern: /static/**
   profiles:
     include: redis, mongodb
   servlet:
@@ -24,5 +26,11 @@ spring:
       max-request-size: 1000MB
   jackson:
     time-zone: GMT+8
-logging:
-  config=classpath:log4j2.xml
+#logging:
+#  config: classpath:log4j2.xml
+#  path: logs
+#  file: test.log
+#  level: info
+#  pattern:
+#    console: "%d{yyyy/MM/dd-HH:mm:ss} [%thread] %-5level %logger- %msg%n"
+#    file: "%d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n"
