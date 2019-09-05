@@ -1,7 +1,7 @@
 server:
   port: 8080
   display-name: OWN
-  context-path: /own
+  context-path: /
   jsp-servlet:
     init-parameters:
       development: true
@@ -10,12 +10,14 @@ server:
 
 info:
   version: "1.0.0"
-
+mybatis:
+  mapperLocations: classpath:mapper/*Mapper.xml
 spring:
   thymeleaf:
+    cache: false
     mode: LEGACYHTML5
-#  resources:
-#    static-locations: classpath:/static/
+  resources:
+    static-locations: classpath:/
 #  mvc:
 #    static-path-pattern: /static/**
   profiles:
@@ -26,11 +28,14 @@ spring:
       max-request-size: 1000MB
   jackson:
     time-zone: GMT+8
-#logging:
-#  config: classpath:log4j2.xml
-#  path: logs
-#  file: test.log
-#  level: info
-#  pattern:
-#    console: "%d{yyyy/MM/dd-HH:mm:ss} [%thread] %-5level %logger- %msg%n"
-#    file: "%d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n"
+security:
+  basic:
+    enabled: false
+
+
+#mybatis日志输出
+logging:
+  level:
+    com.cy.own.dao: debug
+    org:
+      mybatis: debug

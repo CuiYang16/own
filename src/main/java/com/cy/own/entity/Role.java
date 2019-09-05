@@ -1,8 +1,13 @@
 package com.cy.own.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Role {
     /**
      * 
@@ -17,7 +22,7 @@ public class Role {
     /**
      * 
      */
-    private String desc;
+    private String tip;
 
     public String getId() {
         return id;
@@ -35,13 +40,7 @@ public class Role {
         this.roleName = roleName == null ? null : roleName.trim();
     }
 
-    public String getDesc() {
-        return desc;
-    }
 
-    public void setDesc(String desc) {
-        this.desc = desc == null ? null : desc.trim();
-    }
 
     @Override
     public String toString() {

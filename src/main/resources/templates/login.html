@@ -7,23 +7,26 @@
 <body>
 <div class="layui-fluid">
     <div class="layui-row">
-        <div  class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
             <span class="title-content">权限管理系统</span>
         </div>
 
     </div>
-<!--    登录-->
+    <!--    登录-->
     <div class="layui-row login-block">
         <div class="layui-col-xs6 layui-col-sm6 layui-col-md4 layui-col-md-offset4 login-content">
             <div class="layui-card login-card">
                 <div class="layui-card-header">登录</div>
                 <div class="layui-card-body">
-                    <form class="layui-form" action="">
+                    <label style="color: red" th:if="${param.error}" th:text="'用户名或密码错误,请重试!'"></label>
+<!--                    action写跳转登录页面路径-->
+
+                    <form class="layui-form" th:action="@{/forward/login}" method="post">
                         <div class="layui-form-item">
                             <label class="layui-form-label">用户名：</label>
                             <div class="layui-input-block">
                                 <input type="text" name="userName" required lay-verify="required" placeholder="请输入用户名"
-                                       autocomplete="off" class="layui-input">
+                                       autocomplete="off" class="layui-input" autofocus="autofocus" >
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -33,13 +36,18 @@
                                        placeholder="请输入密码" autocomplete="off" class="layui-input">
                             </div>
                         </div>
-
-                            <div class="layui-form-item">
-                                <div class="layui-input-block">
-                                    <button class="layui-btn" lay-submit lay-filter="toLogin">登录</button>
-                                    <button class="layui-btn" lay-submit lay-filter="toRegister" type="button"><i class="layui-icon">注册&#xe602;</i></button>
-                                </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-inline">
+                                <input type="checkbox" name="" title="记住密码" lay-skin="primary">
                             </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-filter="formLogin" type="submit">登录</button>
+                                <button class="layui-btn" type="button" id="to-register"><i class="layui-icon">注册&#xe602;</i>
+                                </button>
+                            </div>
+                        </div>
 
                     </form>
 
@@ -48,31 +56,31 @@
         </div>
     </div>
 
-<!--    注册-->
+    <!--    注册-->
     <div class="layui-row register-block">
         <div class="layui-col-xs6 layui-col-sm6 layui-col-md4 layui-col-md-offset4 register-content">
             <div class="layui-card login-card">
                 <div class="layui-card-header">注册</div>
                 <div class="layui-card-body">
-                    <form class="layui-form" action="">
+                    <form class="layui-form">
                         <div class="layui-form-item">
                             <label class="layui-form-label">用户名：</label>
                             <div class="layui-input-block">
-                                <input type="text" name="userName" required lay-verify="required" placeholder="请输入用户名"
+                                <input type="text" name="userName" required lay-verify="userName" placeholder="请输入用户名"
                                        autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">密码：</label>
                             <div class="layui-input-block">
-                                <input type="password" name="passWord" required lay-verify="required"
-                                       placeholder="请输入密码" autocomplete="off" class="layui-input">
+                                <input type="password" name="passWord" required lay-verify="passWord"
+                                       placeholder="请输入密码" autocomplete="off" class="layui-input" id="register-pw">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">确认密码：</label>
                             <div class="layui-input-block">
-                                <input type="password" name="password" required lay-verify="required"
+                                <input type="password" name="confirmPassWord" required lay-verify="confirmPassWord"
                                        placeholder="请输入密码" autocomplete="off" class="layui-input">
                             </div>
                         </div>
@@ -89,14 +97,16 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">出生日期</label>
                             <div class="layui-input-block">
-                                <input type="text" name="birthday" class="layui-input" id="birthday">
+                                <input type="text" name="birthday" required lay-verify="required" class="layui-input"
+                                       id="birthday">
                             </div>
                         </div>
 
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                                <button class="layui-btn" lay-submit lay-filter="toLogin"><i class="layui-icon">&#xe603;去登录</i>去登录</button>
-                                <button class="layui-btn" lay-submit lay-filter="toRegister" type="button">注册</button>
+                                <button class="layui-btn" id="to-login" type="button"><i
+                                        class="layui-icon">&#xe603;去登录</i></button>
+                                <button class="layui-btn" lay-submit lay-filter="formRegister">注册</button>
                             </div>
                         </div>
 
@@ -110,20 +120,81 @@
 </div>
 
 <script>
-    layui.use(['form','laydate'], function(){
+    layui.use(['form', 'laydate'], function () {
         var form = layui.form;
         var laydate = layui.laydate;
         var $ = layui.$;
 
-        //执行一个laydate实例
+        //生日日期选择执行一个laydate实例
         laydate.render({
             elem: '#birthday' //指定元素
-            ,type: 'date'
+            , type: 'date'
         });
-        //监听提交
-        form.on('submit(toLogin)', function(data){
-            layer.msg(JSON.stringify(data.field));
+        //登录表单监听提交
+        // form.on('submit(formLogin)', function (data) {
+        //     console.log(data);
+        //     layer.msg(JSON.stringify(data.field));
+        //     $.ajax({
+        //         url: '/user/user-login',
+        //         type: 'post',
+        //         data:data.field,
+        //         dataType:'JSON',
+        //         success: function (result) {
+        //             console.log(result);
+        //             layer.msg(JSON.stringify(data.field));return true;
+        //         }
+        //     });
+        //
+        // });
+
+        //注册表单监听提交
+        form.on('submit(formRegister)', function (data) {
+            var registerValue = data.field;
+            console.log(registerValue);
+            $.ajax({
+                url: '/user/user-register', type: "post", success: function (result) {
+                    console.log(result);
+                },
+                error: function (result) {
+                    return false;
+                }
+            })
             return false;
+        });
+
+        form.verify({
+            userName: function (value, item) { //value：表单的值、item：表单的DOM对象
+                if (!new RegExp("^([\u4E00-\\uFA29]|[\\uE7C7-\\uE7F3]|[a-zA-Z0-9]){4,16}$").test(value)) {
+                    return '4-16位，可以包括字母，数字，汉字！';
+                }
+                if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+                    return '用户名首尾不能出现下划线\'_\'';
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字';
+                }
+            },
+            passWord: [
+                /^.*(?=.{8,12})(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&*?_]).*$/
+                , '密码必须8-12位，必须包括字母，数字，特殊字符！'
+            ],
+            confirmPassWord: [
+                /^.*(?=.{8,12})(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&*?_]).*$/
+                , '密码必须8-12位，必须包括字母，数字，特殊字符！'
+            ],
+            confirmPassWord: function (value, item) {
+                if ($("#register-pw").val() != value) {
+                    return "密码不一致，请确认！";
+                }
+            }
+        });
+        $("#to-register").click(function () {
+            $(".login-block").hide();
+            $(".register-block").show();
+        });
+        $("#to-login").click(function () {
+            $(".login-block").show();
+            $(".register-block").hide();
         });
     });
 
@@ -131,13 +202,15 @@
 </script>
 </body>
 <style>
-    body{
+    body {
         background-color: #2F4056;
     }
-    .login-content{
+
+    .login-content {
         margin-top: 24vh;
     }
-    .title-content{
+
+    .title-content {
         display: block;
         font-size: 6vh;
         color: white;
@@ -145,7 +218,7 @@
         width: 100%;
     }
 
-    .register-block{
+    .register-block {
         margin-top: 24vh;
         display: none;
     }

@@ -4,10 +4,10 @@
   <resultMap id="BaseResultMap" type="com.cy.own.entity.Role" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="role_name" property="roleName" jdbcType="VARCHAR" />
-    <result column="desc" property="desc" jdbcType="VARCHAR" />
+    <result column="tip" property="tip" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, role_name, desc
+    id, role_name, tip
   </sql>
 
 <!--  根据用户id获取角色信息-->
@@ -16,7 +16,6 @@
     <include refid="Base_Column_List"/>
     from role where id in (
     select role_id from user_role where user_id=#{userId,jdbcType=VARCHAR}
-    )
     )
   </select>
 
@@ -31,9 +30,9 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.cy.own.entity.Role" >
-    insert into role (id, role_name, desc
+    insert into role (id, role_name, tip
       )
-    values (#{id,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}
+    values (#{id,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, #{tip,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.cy.own.entity.Role" >
@@ -45,8 +44,8 @@
       <if test="roleName != null" >
         role_name,
       </if>
-      <if test="desc != null" >
-        desc,
+      <if test="tip != null" >
+        tip,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -56,8 +55,8 @@
       <if test="roleName != null" >
         #{roleName,jdbcType=VARCHAR},
       </if>
-      <if test="desc != null" >
-        #{desc,jdbcType=VARCHAR},
+      <if test="tip != null" >
+        #{tip,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -67,8 +66,8 @@
       <if test="roleName != null" >
         role_name = #{roleName,jdbcType=VARCHAR},
       </if>
-      <if test="desc != null" >
-        desc = #{desc,jdbcType=VARCHAR},
+      <if test="tip != null" >
+        tip = #{tip,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -76,7 +75,7 @@
   <update id="updateByPrimaryKey" parameterType="com.cy.own.entity.Role" >
     update role
     set role_name = #{roleName,jdbcType=VARCHAR},
-      desc = #{desc,jdbcType=VARCHAR}
+      tip = #{tip,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -1,12 +1,16 @@
 package com.cy.own.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Date;
 
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Users {
     /**
      * 
@@ -72,6 +76,7 @@ public class Users {
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
+
 
     @Override
     public String toString() {

@@ -6,10 +6,10 @@
         <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="url" property="url" jdbcType="VARCHAR"/>
         <result column="pid" property="pid" jdbcType="INTEGER"/>
-        <result column="desc" property="desc" jdbcType="VARCHAR"/>
+        <result column="tip" property="tip" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, name, url, pid, desc
+    id, name, url, pid, tip
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
@@ -36,9 +36,9 @@
   </delete>
     <insert id="insert" parameterType="com.cy.own.entity.Permission">
     insert into permission (id, name, url, 
-      pid, desc)
+      pid, tip)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
-      #{pid,jdbcType=INTEGER}, #{desc,jdbcType=VARCHAR})
+      #{pid,jdbcType=INTEGER}, #{tip,jdbcType=VARCHAR})
   </insert>
     <insert id="insertSelective" parameterType="com.cy.own.entity.Permission">
         insert into permission
@@ -55,8 +55,8 @@
             <if test="pid != null">
                 pid,
             </if>
-            <if test="desc != null">
-                desc,
+            <if test="tip != null">
+                tip,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -72,8 +72,8 @@
             <if test="pid != null">
                 #{pid,jdbcType=INTEGER},
             </if>
-            <if test="desc != null">
-                #{desc,jdbcType=VARCHAR},
+            <if test="tip != null">
+                #{tip,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -89,8 +89,8 @@
             <if test="pid != null">
                 pid = #{pid,jdbcType=INTEGER},
             </if>
-            <if test="desc != null">
-                desc = #{desc,jdbcType=VARCHAR},
+            <if test="tip != null">
+                tip = #{tip,jdbcType=VARCHAR},
             </if>
         </set>
         where id = #{id,jdbcType=VARCHAR}
@@ -100,7 +100,7 @@
     set name = #{name,jdbcType=VARCHAR},
       url = #{url,jdbcType=VARCHAR},
       pid = #{pid,jdbcType=INTEGER},
-      desc = #{desc,jdbcType=VARCHAR}
+      tip = #{tip,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>
