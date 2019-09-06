@@ -133,6 +133,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+<!--        使用thyemleaf sec标签，springboot2以上用5-->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity4</artifactId>
+        </dependency>
 <!--        使 Thymeleaf 可以解析非严格XML格式的文档-->
         <dependency>
         <groupId>net.sourceforge.nekohtml</groupId>

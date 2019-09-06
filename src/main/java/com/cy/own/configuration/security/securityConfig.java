@@ -18,6 +18,9 @@ public class securityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsImpl userDetailsImpl;
 
+    @Autowired
+    private MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //super.configure(auth);
@@ -35,17 +38,24 @@ public class securityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //super.configure(http);
-        http
-                .formLogin().loginPage("/forward/login")
+        http.formLogin().loginPage("/forward/login")
                 //.loginProcessingUrl("/user/user-login")
                 .usernameParameter("userName")
                 .passwordParameter("passWord")
-                .successForwardUrl("/forward/index")
-                .failureUrl("/forward/login?error=true").permitAll().and()
-                //不需要验证
-                .authorizeRequests().antMatchers("/user/user-register").permitAll()
-                .anyRequest().authenticated().and()
-                .logout().permitAll().and().csrf().disable();
+
+                //成功跳转路径必须真实存在
+                //.successForwardUrl("/forward/index")
+                .successHandler(myAuthenticationSuccessHandler)
+                //失败跳转路径必须真实存在
+                .failureUrl("/forward/login").permitAll();
+        //不需要验证
+        http.authorizeRequests().antMatchers("/favicon.ico").permitAll()
+                .anyRequest().authenticated();
+
+        http.logout().logoutUrl("/forward/logout").logoutSuccessUrl("/forward/login").deleteCookies("JSESSIONID").permitAll()
+                .and().csrf().disable();
+        http.sessionManagement().invalidSessionUrl("/forward/login").maximumSessions(5);
+        http.rememberMe().key("own-rememberme").rememberMeCookieName("own-remwmber-me-cookie").tokenValiditySeconds(60);
     }
 
     @Bean

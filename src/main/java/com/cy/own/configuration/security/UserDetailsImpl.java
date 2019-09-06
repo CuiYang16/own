@@ -36,35 +36,38 @@ public class UserDetailsImpl implements UserDetailsService {
     private PermissionMapper permissionMapper;
 
     private Logger logger = LoggerFactory.getLogger(UserDetailsImpl.class);
+
     //private static Log logger = LogFactory.getLog(UserDetailsImpl.class);
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        logger.info(s+"正在登录。。。。。。");
         Users users = usersMapper.selectByUserName(s);
-        if (users!=null&&users.getId()!=null) {
+        if (users != null && users.getId() != null) {
             List<Permission> permissions = permissionMapper.selectByUserId(users.getId());
             List<Role> roles = roleMapper.selectByUserId(users.getId());
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
             roles.forEach(role -> {
-                if (role!=null&&role.getRoleName()!=null) {
-                    grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_"+role.getRoleName()));
+                if (role != null && role.getRoleName() != null) {
+                    grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
                 }
             });
             permissions.forEach(permission -> {
-                if (permission!=null&&permission.getName()!=null) {
+                if (permission != null && permission.getName() != null) {
                     grantedAuthorities.add(new SimpleGrantedAuthority(permission.getName()));
                 }
             });
-           logger.info(users.getUserName()+":登录成功");
-            logger.debug(users.getUserName()+":debug登录成功");
-            return new User(users.getUserName(), users.getPassWord(), grantedAuthorities);
+            logger.info("name:"+users.getUserName());
+            return new User(users.getUserName(), users.getPassWord(), users.getEnabled(), users.getAccountNonExpired(), users.getCredentialsNonExpired(), users.getAccountNonLocked(), grantedAuthorities);
+        }else{
+            throw new UsernameNotFoundException(users.getUserName() + " do not exist!");
         }
-        throw new UsernameNotFoundException(users.getUserName() + " do not exist!");
+
     }
 
     // 密码加密方式
     @Bean("bCryptPasswordEncoder")
-    public PasswordEncoder bCryptPasswordEncoder(){
+    public PasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

@@ -138,7 +138,7 @@
 		</filter>
 	</appender>
 
-	--log4jdbc -->
+	<!--log4jdbc -->
 	<logger name="jdbc.sqltiming" level="debug"/>
 <!--	<logger name="com.ibatis" level="debug" />-->
 <!--	<logger name="com.ibatis.common.jdbc.SimpleDataSource" level="debug" />-->
