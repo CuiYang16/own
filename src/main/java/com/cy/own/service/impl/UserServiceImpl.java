@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseDto registerUser(Users users) {
         if(users.getUserName()!=null&& users.getPassWord()!=null){
-            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+           // BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             int insert = usersMapper.insert(users);
             return ResponseDto.builder().resMsg(String.valueOf(insert)).resCode(22001).build();
         }

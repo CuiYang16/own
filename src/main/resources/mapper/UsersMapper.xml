@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cy.own.dao.UsersMapper" >
+  <resultMap id="BaseResultMap" type="com.cy.own.entity.Users" >
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="pass_word" property="passWord" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="TINYINT" />
+    <result column="birthday" property="birthday" jdbcType="DATE" />
+    <result column="enabled" property="enabled" jdbcType="TINYINT" />
+    <result column="account_non_locked" property="accountNonLocked" jdbcType="TINYINT" />
+    <result column="credentials_non_expired" property="credentialsNonExpired" jdbcType="TINYINT" />
+    <result column="account_non_expired" property="accountNonExpired" jdbcType="TINYINT" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id,user_name,pass_word,sex,birthday,enabled,account_non_locked,credentials_non_expired,account_non_expired
+  </sql>
+  <!--  根据用户名查询-->
+  <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from users
+    where user_name = #{userName,jdbcType=VARCHAR} and enabled=1
+  </select>
+  <insert id="insert" parameterType="com.cy.own.entity.Users" >
+    insert into users (id, user_name, pass_word, 
+      sex, birthday, enabled, 
+      account_non_locked, credentials_non_expired, 
+      account_non_expired)
+    values (#{id,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=TINYINT}, #{birthday,jdbcType=DATE}, #{enabled,jdbcType=TINYINT}, 
+      #{accountNonLocked,jdbcType=TINYINT}, #{credentialsNonExpired,jdbcType=TINYINT}, 
+      #{accountNonExpired,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cy.own.entity.Users" >
+    insert into users
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="passWord != null" >
+        pass_word,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="accountNonLocked != null" >
+        account_non_locked,
+      </if>
+      <if test="credentialsNonExpired != null" >
+        credentials_non_expired,
+      </if>
+      <if test="accountNonExpired != null" >
+        account_non_expired,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="passWord != null" >
+        #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=TINYINT},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=DATE},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=TINYINT},
+      </if>
+      <if test="accountNonLocked != null" >
+        #{accountNonLocked,jdbcType=TINYINT},
+      </if>
+      <if test="credentialsNonExpired != null" >
+        #{credentialsNonExpired,jdbcType=TINYINT},
+      </if>
+      <if test="accountNonExpired != null" >
+        #{accountNonExpired,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+</mapper>
