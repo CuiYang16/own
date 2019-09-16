@@ -1,141 +1,195 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cy.own.dao.UsersMapper">
-  <resultMap id="BaseResultMap" type="com.cy.own.entity.Users">
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="user_name" jdbcType="VARCHAR" property="userName" />
-    <result column="pass_word" jdbcType="VARCHAR" property="passWord" />
-    <result column="sex" jdbcType="TINYINT" property="sex" />
-    <result column="birthday" jdbcType="DATE" property="birthday" />
-    <result column="enabled" jdbcType="TINYINT" property="enabled" />
-    <result column="account_non_locked" jdbcType="TINYINT" property="accountNonLocked" />
-    <result column="credentials_non_expired" jdbcType="TINYINT" property="credentialsNonExpired" />
-    <result column="account_non_expired" jdbcType="TINYINT" property="accountNonExpired" />
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="com.cy.own.entity.Users">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="pass_word" property="passWord" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="TINYINT"/>
+        <result column="birthday" property="birthday" jdbcType="DATE"/>
+        <result column="enabled" property="enabled" jdbcType="TINYINT"/>
+        <result column="account_non_locked" property="accountNonLocked" jdbcType="TINYINT"/>
+        <result column="credentials_non_expired" property="credentialsNonExpired" jdbcType="TINYINT"/>
+        <result column="account_non_expired" property="accountNonExpired" jdbcType="TINYINT"/>
+        <result column="e_mail" property="eMail" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="tel" property="tel" jdbcType="VARCHAR"/>
+        <result column="last_login_time" property="lastLoginTime" jdbcType="TIMESTAMP"/>
+        <result column="login_count" property="loginCount" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, user_name, pass_word, sex, birthday, enabled, account_non_locked, credentials_non_expired, 
-    account_non_expired
+    account_non_expired, e_mail, create_time, tel, last_login_time, login_count
   </sql>
 
-  <!--  根据用户名查询-->
-  <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select
-    <include refid="Base_Column_List" />
-    from users
-    where user_name = #{userName,jdbcType=VARCHAR} and enabled=1
-  </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from users
-    where id = #{id,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    <!--  根据用户名查询-->
+    <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from users
+        where user_name = #{userName,jdbcType=VARCHAR} and enabled=1
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from users
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from users
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insertUser" parameterType="com.cy.own.entity.Users">
+    <insert id="insert" parameterType="com.cy.own.entity.Users">
     insert into users (id, user_name, pass_word, 
       sex, birthday, enabled, 
       account_non_locked, credentials_non_expired, 
-      account_non_expired)
+      account_non_expired, e_mail, create_time, 
+      tel, last_login_time, login_count
+      )
     values (#{id,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR}, 
-      #{sex,jdbcType=TINYINT}, #{birthday,jdbcType=DATE}, #{enabled,jdbcType=TINYINT},
-      #{accountNonLocked,jdbcType=TINYINT}, #{credentialsNonExpired,jdbcType=TINYINT},
-      #{accountNonExpired,jdbcType=TINYINT})
+      #{sex,jdbcType=TINYINT}, #{birthday,jdbcType=DATE}, #{enabled,jdbcType=TINYINT}, 
+      #{accountNonLocked,jdbcType=TINYINT}, #{credentialsNonExpired,jdbcType=TINYINT}, 
+      #{accountNonExpired,jdbcType=TINYINT}, #{eMail,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{tel,jdbcType=VARCHAR}, #{lastLoginTime,jdbcType=TIMESTAMP}, #{loginCount,jdbcType=INTEGER}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.cy.own.entity.Users">
-    insert into users
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="userName != null">
-        user_name,
-      </if>
-      <if test="passWord != null">
-        pass_word,
-      </if>
-      <if test="sex != null">
-        sex,
-      </if>
-      <if test="birthday != null">
-        birthday,
-      </if>
-      <if test="enabled != null">
-        enabled,
-      </if>
-      <if test="accountNonLocked != null">
-        account_non_locked,
-      </if>
-      <if test="credentialsNonExpired != null">
-        credentials_non_expired,
-      </if>
-      <if test="accountNonExpired != null">
-        account_non_expired,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="userName != null">
-        #{userName,jdbcType=VARCHAR},
-      </if>
-      <if test="passWord != null">
-        #{passWord,jdbcType=VARCHAR},
-      </if>
-      <if test="sex != null">
-        #{sex,jdbcType=TINYINT},
-      </if>
-      <if test="birthday != null">
-        #{birthday,jdbcType=DATE},
-      </if>
-      <if test="enabled != null">
-        #{enabled,jdbcType=TINYINT},
-      </if>
-      <if test="accountNonLocked != null">
-        #{accountNonLocked,jdbcType=TINYINT},
-      </if>
-      <if test="credentialsNonExpired != null">
-        #{credentialsNonExpired,jdbcType=TINYINT},
-      </if>
-      <if test="accountNonExpired != null">
-        #{accountNonExpired,jdbcType=TINYINT},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cy.own.entity.Users">
-    update users
-    <set>
-      <if test="userName != null">
-        user_name = #{userName,jdbcType=VARCHAR},
-      </if>
-      <if test="passWord != null">
-        pass_word = #{passWord,jdbcType=VARCHAR},
-      </if>
-      <if test="sex != null">
-        sex = #{sex,jdbcType=TINYINT},
-      </if>
-      <if test="birthday != null">
-        birthday = #{birthday,jdbcType=DATE},
-      </if>
-      <if test="enabled != null">
-        enabled = #{enabled,jdbcType=TINYINT},
-      </if>
-      <if test="accountNonLocked != null">
-        account_non_locked = #{accountNonLocked,jdbcType=TINYINT},
-      </if>
-      <if test="credentialsNonExpired != null">
-        credentials_non_expired = #{credentialsNonExpired,jdbcType=TINYINT},
-      </if>
-      <if test="accountNonExpired != null">
-        account_non_expired = #{accountNonExpired,jdbcType=TINYINT},
-      </if>
-    </set>
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.cy.own.entity.Users">
+    <insert id="insertSelective" parameterType="com.cy.own.entity.Users">
+        insert into users
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="passWord != null">
+                pass_word,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="birthday != null">
+                birthday,
+            </if>
+            <if test="enabled != null">
+                enabled,
+            </if>
+            <if test="accountNonLocked != null">
+                account_non_locked,
+            </if>
+            <if test="credentialsNonExpired != null">
+                credentials_non_expired,
+            </if>
+            <if test="accountNonExpired != null">
+                account_non_expired,
+            </if>
+            <if test="eMail != null">
+                e_mail,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="tel != null">
+                tel,
+            </if>
+            <if test="lastLoginTime != null">
+                last_login_time,
+            </if>
+            <if test="loginCount != null">
+                login_count,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="passWord != null">
+                #{passWord,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=TINYINT},
+            </if>
+            <if test="birthday != null">
+                #{birthday,jdbcType=DATE},
+            </if>
+            <if test="enabled != null">
+                #{enabled,jdbcType=TINYINT},
+            </if>
+            <if test="accountNonLocked != null">
+                #{accountNonLocked,jdbcType=TINYINT},
+            </if>
+            <if test="credentialsNonExpired != null">
+                #{credentialsNonExpired,jdbcType=TINYINT},
+            </if>
+            <if test="accountNonExpired != null">
+                #{accountNonExpired,jdbcType=TINYINT},
+            </if>
+            <if test="eMail != null">
+                #{eMail,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="tel != null">
+                #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTime != null">
+                #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="loginCount != null">
+                #{loginCount,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cy.own.entity.Users">
+        update users
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="passWord != null">
+                pass_word = #{passWord,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=TINYINT},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday,jdbcType=DATE},
+            </if>
+            <if test="enabled != null">
+                enabled = #{enabled,jdbcType=TINYINT},
+            </if>
+            <if test="accountNonLocked != null">
+                account_non_locked = #{accountNonLocked,jdbcType=TINYINT},
+            </if>
+            <if test="credentialsNonExpired != null">
+                credentials_non_expired = #{credentialsNonExpired,jdbcType=TINYINT},
+            </if>
+            <if test="accountNonExpired != null">
+                account_non_expired = #{accountNonExpired,jdbcType=TINYINT},
+            </if>
+            <if test="eMail != null">
+                e_mail = #{eMail,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="tel != null">
+                tel = #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTime != null">
+                last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="loginCount != null">
+                login_count = #{loginCount,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.cy.own.entity.Users">
     update users
     set user_name = #{userName,jdbcType=VARCHAR},
       pass_word = #{passWord,jdbcType=VARCHAR},
@@ -144,8 +198,12 @@
       enabled = #{enabled,jdbcType=TINYINT},
       account_non_locked = #{accountNonLocked,jdbcType=TINYINT},
       credentials_non_expired = #{credentialsNonExpired,jdbcType=TINYINT},
-      account_non_expired = #{accountNonExpired,jdbcType=TINYINT}
+      account_non_expired = #{accountNonExpired,jdbcType=TINYINT},
+      e_mail = #{eMail,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      tel = #{tel,jdbcType=VARCHAR},
+      last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      login_count = #{loginCount,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-
 </mapper>

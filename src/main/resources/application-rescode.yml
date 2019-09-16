@@ -1,0 +1,7 @@
+user:
+  login_success: 21001
+  login_fail: 51001
+  register_success: 22001
+  register_fail: 52001
+  validity_username_success: 22002
+  validity_username_fail: 52002

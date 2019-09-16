@@ -5,7 +5,7 @@ import com.cy.own.entity.Users;
 public interface UsersMapper {
     int deleteByPrimaryKey(String id);
 
-    int insertUser(Users record);
+    int insert(Users record);
 
     int insertSelective(Users record);
 

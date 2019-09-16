@@ -54,9 +54,12 @@ public class UserDetailsImpl implements UserDetailsService {
                 }
             });
             permissions.forEach(permission -> {
-                if (permission != null && permission.getName() != null) {
-                    grantedAuthorities.add(new SimpleGrantedAuthority(permission.getName()));
+                if (permission != null && permission.getPermissionName() != null) {
+                    grantedAuthorities.add(new SimpleGrantedAuthority(permission.getPermissionName()));
                 }
+            });
+            grantedAuthorities.forEach(g->{
+                System.out.println(g);
             });
             logger.info("name:"+users.getUserName());
             return new User(users.getUserName(), users.getPassWord(), users.getEnabled(), users.getAccountNonExpired(), users.getCredentialsNonExpired(), users.getAccountNonLocked(), grantedAuthorities);

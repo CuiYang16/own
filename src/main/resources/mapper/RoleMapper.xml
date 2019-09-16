@@ -4,13 +4,15 @@
   <resultMap id="BaseResultMap" type="com.cy.own.entity.Role" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="role_name" property="roleName" jdbcType="VARCHAR" />
-    <result column="tip" property="tip" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, role_name, tip
+    id, role_name, description, create_time, parent_id
   </sql>
 
-<!--  根据用户id获取角色信息-->
+  <!--  根据用户id获取角色信息-->
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.String">
     select
     <include refid="Base_Column_List"/>
@@ -18,7 +20,6 @@
     select role_id from user_role where user_id=#{userId,jdbcType=VARCHAR}
     )
   </select>
-
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
@@ -30,10 +31,10 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.cy.own.entity.Role" >
-    insert into role (id, role_name, tip
-      )
-    values (#{id,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, #{tip,jdbcType=VARCHAR}
-      )
+    insert into role (id, role_name, description, 
+      create_time, parent_id)
+    values (#{id,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{parentId,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.cy.own.entity.Role" >
     insert into role
@@ -44,8 +45,14 @@
       <if test="roleName != null" >
         role_name,
       </if>
-      <if test="tip != null" >
-        tip,
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -55,8 +62,14 @@
       <if test="roleName != null" >
         #{roleName,jdbcType=VARCHAR},
       </if>
-      <if test="tip != null" >
-        #{tip,jdbcType=VARCHAR},
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -66,8 +79,14 @@
       <if test="roleName != null" >
         role_name = #{roleName,jdbcType=VARCHAR},
       </if>
-      <if test="tip != null" >
-        tip = #{tip,jdbcType=VARCHAR},
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -75,7 +94,9 @@
   <update id="updateByPrimaryKey" parameterType="com.cy.own.entity.Role" >
     update role
     set role_name = #{roleName,jdbcType=VARCHAR},
-      tip = #{tip,jdbcType=VARCHAR}
+      description = #{description,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      parent_id = #{parentId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -1,9 +1,7 @@
 package com.cy.own.dao;
 
 import com.cy.own.entity.UserRole;
-import org.apache.ibatis.annotations.Mapper;
 
-@Mapper
 public interface UserRoleMapper {
     int deleteByPrimaryKey(String id);
 

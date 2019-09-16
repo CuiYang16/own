@@ -8,4 +8,6 @@ public interface UserService {
     ResponseDto registerUser(Users users);
 
     ResponseDto login(Users users);
+
+    ResponseDto validityUserName(String userName);
 }

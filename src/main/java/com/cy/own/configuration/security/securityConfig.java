@@ -54,7 +54,7 @@ public class securityConfig extends WebSecurityConfigurerAdapter {
                 //失败跳转路径必须真实存在
                 .failureUrl("/forward/login").permitAll();
         //不需要验证
-        http.authorizeRequests().antMatchers("/favicon.ico", "/user/user-register", "/forward/to-login", "/forward/to-register").permitAll()
+        http.authorizeRequests().antMatchers("/favicon.ico", "/user/user-register", "/forward/to-login", "/forward/to-register","/user/val-user-name").permitAll()
                 .anyRequest().authenticated();
 
         http.logout().logoutUrl("/forward/logout").logoutSuccessUrl("/forward/login").deleteCookies("JSESSIONID").permitAll()

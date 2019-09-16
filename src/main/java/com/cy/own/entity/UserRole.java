@@ -1,8 +1,13 @@
 package com.cy.own.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRole {
     /**
      * 

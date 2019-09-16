@@ -24,26 +24,31 @@ public class LoginController {
             logger.info("e：" + e.toString());
             logger.info("exceptionName：" + e.getMessage());
             //截取异常名称
-            exceptionName=e.getMessage();
+            exceptionName = e.getMessage();
 
             //返回错误信息
             model.addAttribute("error", exceptionName);
         }
 
         return "login";
-    };
+    }
+
+    ;
 
     @RequestMapping("/to-login")
-    public String toLogin(){
+    public String toLogin() {
         return "login";
     }
+
     @RequestMapping("/to-register")
-    public String toRegister(){
+    public String toRegister() {
         return "register";
     }
 
     @RequestMapping(value = "/index")
     public String toIndex() {
         return "index";
-    };
+    }
+
+    ;
 }
