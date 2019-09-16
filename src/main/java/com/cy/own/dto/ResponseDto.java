@@ -1,21 +1,26 @@
 package com.cy.own.dto;
 
-import lombok.Builder;
+import lombok.*;
 
 import java.util.List;
 
 @Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ResponseDto {
 
     //响应码
-    private int resCode;
+    private int code;
 
     //响应文本信息
-    private String resMsg;
+    private String msg;
 
     //响应对象信息
     private Object resObj;
 
+    private int count;
     //响应集合
-    private List<Object> resList;
+    private List<Object> data;
 }

@@ -22,52 +22,28 @@ public class LoginController {
         String error;
         if (e != null && e.toString() != null) {
             logger.info("e：" + e.toString());
+            logger.info("exceptionName：" + e.getMessage());
             //截取异常名称
-            exceptionName = e.toString()
-                    .substring(e.toString().lastIndexOf(".") + 1,
-                            e.toString().lastIndexOf(":") == -1 ? e.toString().length() : e.toString().lastIndexOf(":"));
-            logger.info("exceptionName：" + exceptionName);
-            //判断异常名称
-            switch (exceptionName) {
-                case "BadCredentialsException":
-                    error = "密码错误！";
-                    break;
-                case "InternalAuthenticationServiceException":
-                    error = "账号不存在！";
-                    break;
-                case "LockedException":
-                    error = "账户已锁定！";
-                    break;
-                case "DisabledException":
-                    error = "账户被禁用！";
-                    break;
-                case "CredentialExpiredException":
-                    error = "证书过期！";
-                    break;
-                case "AccountExpiredException ":
-                    error = "账户过期";
-                    break;
-                case "UsernameNotFoundException":
-                    error = "用户名不存在！";
-                    break;
-                default:
-                    error = "";
-                    break;
+            exceptionName=e.getMessage();
 
-            }
             //返回错误信息
-            model.addAttribute("error", error);
+            model.addAttribute("error", exceptionName);
         }
 
         return "login";
-    }
+    };
 
-    ;
+    @RequestMapping("/to-login")
+    public String toLogin(){
+        return "login";
+    }
+    @RequestMapping("/to-register")
+    public String toRegister(){
+        return "register";
+    }
 
     @RequestMapping(value = "/index")
-    public String toindex() {
+    public String toIndex() {
         return "index";
-    }
-
-    ;
+    };
 }

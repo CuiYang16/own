@@ -1,27 +1,21 @@
 package com.cy.own.configuration.druid;
 
-import java.util.Properties;
-
+import com.alibaba.druid.pool.DruidDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import java.util.Properties;
 
- 
+
 @Configuration
-@EnableConfigurationProperties(DruidSettings.class)
+//@EnableConfigurationProperties(DruidSettings.class)
 public class DruidDataSourceConfig {
-
     @Autowired
     private DruidSettings druidSettings;
 
     @Bean
-  //  @ConfigurationProperties("spring.druid.datasource")
-    public DruidDataSource dataSource(
-            DataSourceProperties properties) throws Exception{
+    public DruidDataSource dataSource() throws Exception{
         DruidDataSource dataSource = new DruidDataSource();
         dataSource.setDriverClassName(druidSettings.getDriverClassName());
         dataSource.setUrl(druidSettings.getUrl());
@@ -60,4 +54,5 @@ public class DruidDataSourceConfig {
 
         return dataSource;
     }
+
 }

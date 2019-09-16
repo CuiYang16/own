@@ -35,6 +35,7 @@ public class UserDetailsImpl implements UserDetailsService {
     @Autowired
     private PermissionMapper permissionMapper;
 
+
     private Logger logger = LoggerFactory.getLogger(UserDetailsImpl.class);
 
     //private static Log logger = LogFactory.getLog(UserDetailsImpl.class);

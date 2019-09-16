@@ -12,7 +12,13 @@ info:
   version: "1.0.0"
 mybatis:
   mapperLocations: classpath:mapper/*Mapper.xml
+
+
 spring:
+  messages:
+
+    basename: security/il8n/messages_zh_CN
+    encoding: utf-8
   thymeleaf:
     cache: false
     mode: LEGACYHTML5
@@ -21,7 +27,7 @@ spring:
 #  mvc:
 #    static-path-pattern: /static/**
   profiles:
-    include: redis, mongodb
+    include: druid, redis
   servlet:
     multipart:
       max-file-size: 100MB

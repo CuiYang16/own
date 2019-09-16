@@ -1,5 +1,6 @@
 package com.cy.own.configuration.security;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -20,6 +22,9 @@ public class securityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
+
+    @Autowired
+    private DruidDataSource dataSource;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -49,18 +54,31 @@ public class securityConfig extends WebSecurityConfigurerAdapter {
                 //失败跳转路径必须真实存在
                 .failureUrl("/forward/login").permitAll();
         //不需要验证
-        http.authorizeRequests().antMatchers("/favicon.ico").permitAll()
+        http.authorizeRequests().antMatchers("/favicon.ico", "/user/user-register", "/forward/to-login", "/forward/to-register").permitAll()
                 .anyRequest().authenticated();
 
         http.logout().logoutUrl("/forward/logout").logoutSuccessUrl("/forward/login").deleteCookies("JSESSIONID").permitAll()
                 .and().csrf().disable();
         http.sessionManagement().invalidSessionUrl("/forward/login").maximumSessions(5);
-        http.rememberMe().key("own-rememberme").rememberMeCookieName("own-remwmber-me-cookie").tokenValiditySeconds(60);
+        http.rememberMe().key("own-remember-me").rememberMeCookieName("own-remember-me-cookie")
+                .tokenValiditySeconds(1209600).tokenRepository(persistentTokenRepository());
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+
+        MyJdbcTokenRepositoryImpl persistentTokenRepository = new MyJdbcTokenRepositoryImpl();
+        //JdbcTokenRepositoryImpl persistentTokenRepository = new JdbcTokenRepositoryImpl();
+        // 将 DataSource 设置到 PersistentTokenRepository
+        persistentTokenRepository.setDataSource(dataSource);
+        // 第一次启动的时候自动建表（可以不用这句话，自己手动建表，源码中有语句的）
+        // persistentTokenRepository.setCreateTableOnStartup(true);
+        return persistentTokenRepository;
     }
 
 }
