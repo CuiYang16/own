@@ -1,5 +1,6 @@
 package com.cy.own.configuration.security;
 
+import com.cy.own.dao.UsersMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +20,16 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private UsersMapper usersMapper;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
         logger.info("登录成功");
-        logger.info(String.valueOf(authentication));
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         //httpServletResponse.getWriter().write(objectMapper.writeValueAsString(authentication));
+        usersMapper.addLoginCount(authentication.getName());
         httpServletResponse.sendRedirect("/forward/index");
     }
 }

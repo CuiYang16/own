@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 
 @Configuration
 @EnableWebSecurity
-public class securityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsImpl userDetailsImpl;
@@ -62,6 +62,7 @@ public class securityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().invalidSessionUrl("/forward/login").maximumSessions(5);
         http.rememberMe().key("own-remember-me").rememberMeCookieName("own-remember-me-cookie")
                 .tokenValiditySeconds(1209600).tokenRepository(persistentTokenRepository());
+        http.headers().frameOptions().disable();
     }
 
     @Bean

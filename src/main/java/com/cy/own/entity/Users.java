@@ -1,5 +1,6 @@
 package com.cy.own.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -31,11 +32,13 @@ public class Users {
     /**
      * 性别
      */
+
     private Boolean sex;
 
     /**
      * 生日
      */
+    @JsonFormat(timezone = "GMT+8", shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
 
@@ -67,6 +70,7 @@ public class Users {
     /**
      * 用户创建时间
      */
+    @JsonFormat(timezone = "GMT+8", shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -77,11 +81,13 @@ public class Users {
     /**
      * 最后登录时间
      */
+    @JsonFormat(timezone = "GMT+8", shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastLoginTime;
 
     /**
      * 登录次数
      */
+
     private Integer loginCount;
 
     public String getId() {

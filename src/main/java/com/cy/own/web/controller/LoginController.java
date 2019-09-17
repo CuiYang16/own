@@ -48,7 +48,10 @@ public class LoginController {
     @RequestMapping(value = "/index")
     public String toIndex() {
         return "index";
-    }
+    };
 
-    ;
+    @RequestMapping("/home")
+    public String toHome(){
+        return "home";
+    }
 }

@@ -5,3 +5,5 @@ user:
   register_fail: 52001
   validity_username_success: 22002
   validity_username_fail: 52002
+  select_all: 23001
+  select_all_fail: 53001

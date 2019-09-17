@@ -5,11 +5,16 @@ import com.cy.own.dto.ResponseDto;
 import com.cy.own.entity.Users;
 import com.cy.own.service.UserService;
 import com.cy.own.util.UUIDutil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -57,6 +62,7 @@ public class UserServiceImpl implements UserService {
            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             users.setId(UUIDutil.getUUID());
             users.setPassWord(bCryptPasswordEncoder.encode(users.getPassWord()));
+            users.setCreateTime(new Date());
             int insert = usersMapper.insertSelective(users);
             return ResponseDto.builder().msg(String.valueOf(insert)).code(Integer.valueOf(env.getProperty("user.register_fail","22001"))).build();
         }
@@ -79,5 +85,23 @@ public class UserServiceImpl implements UserService {
 
         ResponseDto dto = ResponseDto.builder().code(Integer.valueOf(env.getProperty("user.validity_username_success","22002"))).msg("用户名可使用！").build();
         return dto;
+    }
+
+    /**
+     * 查询所有用户
+     * @return
+     */
+    @Override
+    public ResponseDto selectAllUser(int page,int limit) {
+        PageHelper.startPage(page, limit);
+        List<Users> users = usersMapper.selectAllUser();
+        PageInfo<Users> pageInfo = new PageInfo<Users>(users);
+        ResponseDto responseDto;
+        try {
+           responseDto = ResponseDto.builder().data(users).count((int) pageInfo.getTotal()).code(Integer.valueOf(23001)).build();
+        }catch (Exception e){
+           responseDto = ResponseDto.builder().data(null).count(0).code(Integer.valueOf(53001)).build();
+        }
+        return responseDto;
     }
 }

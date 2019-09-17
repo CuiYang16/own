@@ -50,6 +50,7 @@ public class UserDetailsImpl implements UserDetailsService {
 
             roles.forEach(role -> {
                 if (role != null && role.getRoleName() != null) {
+                    //角色名需要加ROLE_前缀
                     grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
                 }
             });
@@ -57,9 +58,6 @@ public class UserDetailsImpl implements UserDetailsService {
                 if (permission != null && permission.getPermissionName() != null) {
                     grantedAuthorities.add(new SimpleGrantedAuthority(permission.getPermissionName()));
                 }
-            });
-            grantedAuthorities.forEach(g->{
-                System.out.println(g);
             });
             logger.info("name:"+users.getUserName());
             return new User(users.getUserName(), users.getPassWord(), users.getEnabled(), users.getAccountNonExpired(), users.getCredentialsNonExpired(), users.getAccountNonLocked(), grantedAuthorities);

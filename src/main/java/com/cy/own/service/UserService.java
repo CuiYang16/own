@@ -10,4 +10,6 @@ public interface UserService {
     ResponseDto login(Users users);
 
     ResponseDto validityUserName(String userName);
+
+    ResponseDto selectAllUser(int page,int limit);
 }

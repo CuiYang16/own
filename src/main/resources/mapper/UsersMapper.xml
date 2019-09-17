@@ -21,24 +21,38 @@
     id, user_name, pass_word, sex, birthday, enabled, account_non_locked, credentials_non_expired, 
     account_non_expired, e_mail, create_time, tel, last_login_time, login_count
   </sql>
+    <sql id="User_List">
+    id, user_name, sex, birthday, enabled, account_non_locked, credentials_non_expired,
+    account_non_expired, e_mail, create_time, tel, last_login_time, login_count
+  </sql>
 
     <!--  根据用户名查询-->
     <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List"/>
         from users
-        where user_name = #{userName,jdbcType=VARCHAR} and enabled=1
+        where user_name = #{userName,jdbcType=VARCHAR}
     </select>
+
+<!--    查询所有用户信息-->
+    <select id="selectAllUser" resultMap="BaseResultMap">
+        select
+        <include refid="User_List"/>
+        from users order by create_time desc
+    </select>
+
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List"/>
         from users
         where id = #{id,jdbcType=VARCHAR}
     </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from users
     where id = #{id,jdbcType=VARCHAR}
   </delete>
+
     <insert id="insert" parameterType="com.cy.own.entity.Users">
     insert into users (id, user_name, pass_word, 
       sex, birthday, enabled, 
@@ -53,6 +67,7 @@
       #{tel,jdbcType=VARCHAR}, #{lastLoginTime,jdbcType=TIMESTAMP}, #{loginCount,jdbcType=INTEGER}
       )
   </insert>
+
     <insert id="insertSelective" parameterType="com.cy.own.entity.Users">
         insert into users
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -144,6 +159,7 @@
             </if>
         </trim>
     </insert>
+
     <update id="updateByPrimaryKeySelective" parameterType="com.cy.own.entity.Users">
         update users
         <set>
@@ -189,6 +205,7 @@
         </set>
         where id = #{id,jdbcType=VARCHAR}
     </update>
+
     <update id="updateByPrimaryKey" parameterType="com.cy.own.entity.Users">
     update users
     set user_name = #{userName,jdbcType=VARCHAR},
@@ -206,4 +223,9 @@
       login_count = #{loginCount,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+<!--    增加登录次数-->
+    <update id="addLoginCount" parameterType="string">
+        update users set login_count = login_count+1,last_login_time=NOW() where user_name=#{userName,jdbcType=VARCHAR}
+    </update>
 </mapper>

@@ -23,5 +23,5 @@ public class ResponseDto {
 
     private int count;
     //响应集合
-    private List<Object> data;
+    private List data;
 }

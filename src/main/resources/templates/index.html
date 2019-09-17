@@ -3,7 +3,6 @@
 <head th:include="common/scriptInc">
     <meta charset="UTF-8"/>
     <title>首页</title>
-    <base target="frame-content" />
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -13,6 +12,7 @@
         </div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><i class="layui-icon layui-icon-shrink-right"></i> </li>
             <li class="layui-nav-item"><a href="">主页</a></li>
         </ul>
         <ul class="layui-nav layui-layout-right">
@@ -35,12 +35,12 @@
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree"  lay-filter="test">
                 <li class="layui-nav-item layui-nav-itemed" sec:authorize="hasRole('ROLE_admin')">
-                    <a class="" href="javascript:;">授权管理</a>
+                    <a class="" href="javascript:;" lay-direction="2" lay-tips="主页"><i class="layui-icon layui-icon-auz"></i> <cite>授权管理</cite></a>
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">用户管理</a></dd>
+                        <dd><a href="javascript:;" onclick="iframeSrc('/users/user-manage');">用户管理</a></dd>
                         <dd><a href="javascript:;">角色管理</a></dd>
                         <dd><a href="javascript:;">权限管理</a></dd>
-                        <dd><a href="javascript:;">菜单管理</a></dd>
+                        <dd sec:authorize="hasAuthority('index_home')"><a href="javascript:;">菜单管理</a></dd>
                         <dd><a href="javascript:;">按钮管理</a></dd>
                     </dl>
                 </li>
@@ -50,7 +50,7 @@
 
     <div class="layui-body">
         <!-- 内容主体区域 -->
-        <iframe style="padding: 15px;" name="frame-content" id="iframeMain" src="" style="width: 100%"; height="100%";></iframe>
+        <iframe name="frameContent" src="/forward/home" id="iframeMain" width="100%" height="100%" scrolling="auto"></iframe>
     </div>
 
     <div class="layui-footer">
@@ -65,7 +65,9 @@
         var $ = layui.$;
         var layer = layui.layer;
 
-
+        window.iframeSrc=function (srcValue){
+            $('iframe').attr('src',srcValue);
+        }
 
     });
     function logout(){
@@ -77,6 +79,8 @@
             layer.close(l);
         });
     }
+
+
 </script>
 </body>
 </html>
