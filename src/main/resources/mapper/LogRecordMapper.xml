@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cy.own.dao.LogRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.cy.own.entity.LogRecord" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="log_type" property="logType" jdbcType="VARCHAR" />
+    <result column="log_content" property="logContent" jdbcType="VARCHAR" />
+    <result column="log_user" property="logUser" jdbcType="VARCHAR" />
+    <result column="log_time" property="logTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, log_type, log_content, log_user, log_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from log_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from log_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.cy.own.entity.LogRecord" >
+    insert into log_record (id, log_type, log_content, 
+      log_user, log_time)
+    values (#{id,jdbcType=VARCHAR}, #{logType,jdbcType=VARCHAR}, #{logContent,jdbcType=VARCHAR}, 
+      #{logUser,jdbcType=VARCHAR}, #{logTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cy.own.entity.LogRecord" >
+    insert into log_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="logType != null" >
+        log_type,
+      </if>
+      <if test="logContent != null" >
+        log_content,
+      </if>
+      <if test="logUser != null" >
+        log_user,
+      </if>
+      <if test="logTime != null" >
+        log_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="logType != null" >
+        #{logType,jdbcType=VARCHAR},
+      </if>
+      <if test="logContent != null" >
+        #{logContent,jdbcType=VARCHAR},
+      </if>
+      <if test="logUser != null" >
+        #{logUser,jdbcType=VARCHAR},
+      </if>
+      <if test="logTime != null" >
+        #{logTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cy.own.entity.LogRecord" >
+    update log_record
+    <set >
+      <if test="logType != null" >
+        log_type = #{logType,jdbcType=VARCHAR},
+      </if>
+      <if test="logContent != null" >
+        log_content = #{logContent,jdbcType=VARCHAR},
+      </if>
+      <if test="logUser != null" >
+        log_user = #{logUser,jdbcType=VARCHAR},
+      </if>
+      <if test="logTime != null" >
+        log_time = #{logTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cy.own.entity.LogRecord" >
+    update log_record
+    set log_type = #{logType,jdbcType=VARCHAR},
+      log_content = #{logContent,jdbcType=VARCHAR},
+      log_user = #{logUser,jdbcType=VARCHAR},
+      log_time = #{logTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -33,7 +33,7 @@ public class Users {
      * 性别
      */
 
-    private Boolean sex;
+    private Byte sex;
 
     /**
      * 生日
@@ -114,11 +114,11 @@ public class Users {
         this.passWord = passWord == null ? null : passWord.trim();
     }
 
-    public Boolean getSex() {
+    public Byte getSex() {
         return sex;
     }
 
-    public void setSex(Boolean sex) {
+    public void setSex(Byte sex) {
         this.sex = sex;
     }
 

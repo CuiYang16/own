@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="common/scriptInc">
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+<!--            顶部工具类-->
+            <script type="text/html" id="headToolbar">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="addUser">添加用户</button>
+                </div>
+            </script>
+
+            <table id="users-table" lay-filter="userTableFilter"></table>
+<!--操作栏-->
+            <script type="text/html" id="userBar">
+                <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+</body>
+<script th:src="@{/static/app/js/userManage.js}"></script>
+</html>

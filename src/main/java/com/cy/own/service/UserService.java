@@ -12,4 +12,8 @@ public interface UserService {
     ResponseDto validityUserName(String userName);
 
     ResponseDto selectAllUser(int page,int limit);
+
+    ResponseDto updataUser(Users users);
+
+    ResponseDto createUser(Users users);
 }
