@@ -13,7 +13,7 @@ public interface UsersMapper {
 //验证用户
     Users selectByUserName(String userName);
     //查询所有用户
-    List<Users> selectAllUser();
+    List<Users> selectAllUser(String idOrName);
 
     Users selectByPrimaryKey(String id);
 

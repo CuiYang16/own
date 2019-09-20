@@ -8,7 +8,7 @@
 <div class="layui-fluid">
     <div class="layui-row">
         <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
-            <form class="layui-form" action="" id="userForm" lay-filter="userForm">
+            <form class="layui-form layui-form-pane" action="" id="userForm" lay-filter="userForm">
                 <input type="text" name="id"
                        class="layui-input" style="display: none;">
                 <label id=""></label>
@@ -95,7 +95,7 @@
 </body>
 <script>
     layui.config({
-        base: '/static/app/common/' //插件路径
+        base: '/static/app/module/' //插件路径
     }).extend({
         enhanceform: 'enhanceform'
     });
@@ -147,13 +147,12 @@
                 // });
 
             }
-        })
-        // //监听提交
-        // form.on('submit(submitUserForm)', function (data) {
-        //     layer.msg(JSON.stringify(data.field));
-        //
-        //     return false;
-        // });
+        });
+
+        $("#userForm").on('submit',function(val){
+            console.log(val)
+            return false;
+        });
     })
 
 </script>

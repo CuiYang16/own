@@ -38,7 +38,11 @@
     <select id="selectAllUser" resultMap="BaseResultMap">
         select
         <include refid="User_List"/>
-        from users order by create_time desc
+        from users
+         <if test="_parameter!=null">
+             where id = #{idOrName,jdbcType=VARCHAR} or user_name = #{idOrName,jdbcType=VARCHAR}
+         </if>
+         order by create_time desc
     </select>
 
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">

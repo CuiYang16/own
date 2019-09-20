@@ -11,7 +11,7 @@ public interface UserService {
 
     ResponseDto validityUserName(String userName);
 
-    ResponseDto selectAllUser(int page,int limit);
+    ResponseDto selectAllUser(int page,int limit,String idOrName);
 
     ResponseDto updataUser(Users users);
 

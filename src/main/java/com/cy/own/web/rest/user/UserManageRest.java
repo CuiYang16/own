@@ -14,8 +14,8 @@ public class UserManageRest {
     private UserService userService;
 
     @RequestMapping(value = "/get-users",method = RequestMethod.GET)
-    public ResponseDto getAllUser(@RequestParam("page")int page,@RequestParam("limit")int limit){
-        return userService.selectAllUser(page, limit);
+    public ResponseDto getAllUser(@RequestParam("page")int page,@RequestParam("limit")int limit,@RequestParam(value = "idOrName",required = false) String idOrName){
+        return userService.selectAllUser(page, limit,idOrName);
     }
 
     @RequestMapping(value = "/update-user",method = RequestMethod.POST)

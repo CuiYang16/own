@@ -21,7 +21,7 @@
                     <label style="color: red" th:if="error!=''" th:text="${error}"></label>
                     <!--                    action写路径随便，只需要和配置的登录路径一样即可-->
 
-                    <form class="layui-form" th:action="@{/forward/login}" method="post">
+                    <form class="layui-form layui-form-pane" th:action="@{/forward/login}" method="post">
                         <div class="layui-form-item">
                             <label class="layui-form-label">用户名：</label>
                             <div class="layui-input-block">
@@ -40,7 +40,7 @@
                         <div class="layui-form-item">
                             <div class="layui-input-block">
                                 <!--                                此处必须为name="remember-me"-->
-                                <input type="checkbox" name="remember-me" id="remember-me" title="记住密码"
+                                <input type="checkbox" name="remember-me" id="remember-me" title="记住我"
                                        lay-skin="primary">
                             </div>
                         </div>

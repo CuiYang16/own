@@ -20,7 +20,7 @@ public class RedisUtil {
     private RedisTemplate<String, Object> redisTemplate;
 
 
-    // =============================common============================
+    // =============================module============================
 
     /**
      * 指定缓存失效时间

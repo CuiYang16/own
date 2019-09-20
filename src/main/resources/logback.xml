@@ -8,7 +8,7 @@
 	<contextName>logback-spring</contextName>
 
 	<!-- name的值是变量的名称，value的值时变量定义的值。通过定义的值会被插入到logger上下文中。定义后，可以使“${}”来使用变量。 -->
-	<property name="logging.path" value="own" />
+	<property name="logging.path" value="ownlog" />
 
 	<!--0. 日志格式和颜色渲染 -->
 	<!-- 彩色日志依赖的渲染类 -->
@@ -141,8 +141,8 @@
 	<!--log4jdbc -->
 	<logger name="jdbc.sqltiming" level="debug"/>
 <!--	<logger name="com.ibatis" level="debug" />-->
-<!--	<logger name="com.ibatis.common.jdbc.SimpleDataSource" level="debug" />-->
-<!--	<logger name="com.ibatis.common.jdbc.ScriptRunner" level="debug" />-->
+<!--	<logger name="com.ibatis.module.jdbc.SimpleDataSource" level="debug" />-->
+<!--	<logger name="com.ibatis.module.jdbc.ScriptRunner" level="debug" />-->
 <!--	<logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate"-->
 <!--			level="debug" />-->
 <!--	<logger name="java.sql.Connection" level="debug" />-->

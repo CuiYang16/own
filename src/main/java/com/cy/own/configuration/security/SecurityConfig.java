@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().csrf().disable();
         http.sessionManagement().invalidSessionUrl("/forward/login").maximumSessions(5);
         http.rememberMe().key("own-remember-me").rememberMeCookieName("own-remember-me-cookie")
-                .tokenValiditySeconds(1209600).tokenRepository(persistentTokenRepository());
+                .tokenValiditySeconds(60 * 60 * 24 * 7).tokenRepository(persistentTokenRepository());
         http.headers().frameOptions().disable();
     }
 

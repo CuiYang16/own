@@ -92,9 +92,9 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public ResponseDto selectAllUser(int page,int limit) {
+    public ResponseDto selectAllUser(int page,int limit,String idOrName) {
         PageHelper.startPage(page, limit);
-        List<Users> users = usersMapper.selectAllUser();
+        List<Users> users = usersMapper.selectAllUser(idOrName);
         PageInfo<Users> pageInfo = new PageInfo<Users>(users);
         ResponseDto responseDto;
         try {
