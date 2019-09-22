@@ -1,5 +1,6 @@
-package com.cy.own.entity;
+package com.cy.own.entity.role;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class Role {
     /**
      * 创建时间
      */
+    @JsonFormat(timezone = "GMT+8", shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**

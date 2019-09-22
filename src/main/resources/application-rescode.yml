@@ -1,19 +1,24 @@
 user:
   default_pwd: admin_123
-  code:
+code:
+  user:
     login_success: 21001
     login_fail: 51001
-    register_success: 22001
-    register_fail: 52001
-    validity_username_success: 22002
-    validity_username_fail: 52002
-    select_user_all: 23001
-    select_user_all_fail: 53001
-    update_user: 23002
-    update_user_fail: 53002
-    insert_user: 23003
-    insert_user_fail: 53003
-  msg:
+    register_success: 21002
+    register_fail: 51002
+    validity_username_success: 21003
+    validity_username_fail: 51003
+    select_user_all: 21004
+    select_user_all_fail: 51004
+    update_user: 21005
+    update_user_fail: 51005
+    insert_user: 21006
+    insert_user_fail: 51006
+  role:
+    select_role_all: 22001
+    select_role_all_fail: 52001
+mag:
+  user:
     login_success: 登录成功
     login_fail: 登录失败
     register_success: 注册成功
@@ -26,3 +31,6 @@ user:
     update_user_fail: 编辑用户信息失败，请刷新重试！
     insert_user: 添加用户成功！
     insert_user_fail: 添加用户失败，请刷新重试！
+  role:
+    select_role_all: 查询成功！
+    select_role_all_fail: 查询角色信息失败，请刷新重试！

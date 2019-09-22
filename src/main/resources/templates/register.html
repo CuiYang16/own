@@ -170,11 +170,11 @@
                 type:'get',
                 data:{"userName":$("#userName").val()},
                 success:function(result){
-                    if(result.code==52002){
+                    if(result.code==51002){
                         $("#validity_msg").text(result.msg);
                         $("#register-btn").addClass("layui-btn-disabled");
                     }
-                    if(result.code==22002){
+                    if(result.code==21002){
                         layer.msg(result.msg, {icon: 6,offset:'10vh',time:1500});
                         $("#validity_msg").text('');
                         $("#register-btn").removeClass("layui-btn-disabled");

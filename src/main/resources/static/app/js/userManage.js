@@ -135,7 +135,7 @@ layui.use('table', function () {
                             async: false,
                             data: {"userName": userName},
                             success: function (result) {
-                                if (result.code == 52002) {
+                                if (result.code == 51003) {
                                     layer.msg(result.msg);
                                     return false;
                                 } else {
@@ -155,12 +155,12 @@ layui.use('table', function () {
                                                 //     });
                                                 //     return false;
                                                 // }
-                                                if (result.code == 23003) {
+                                                if (result.code == 21006) {
 
                                                     layer.msg(result.msg);
                                                     table.reload('users-table');
                                                 }
-                                                if (result.code == 53003) {
+                                                if (result.code == 51006) {
                                                     layer.msg(result.code + ':' + result.msg);
                                                 }
                                             },
@@ -259,7 +259,7 @@ layui.use('table', function () {
                             type: "post",
                             data: data.field,
                             success: function (result) {
-                                if (result.code == 23002) {
+                                if (result.code == 21005) {
                                     layer.msg(result.msg);
                                     table.reload('users-table');
                                 } else {

@@ -1,4 +1,4 @@
-package com.cy.own.entity;
+package com.cy.own.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
