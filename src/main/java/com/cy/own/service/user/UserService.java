@@ -1,7 +1,7 @@
-package com.cy.own.service;
+package com.cy.own.service.user;
 
 import com.cy.own.dto.ResponseDto;
-import com.cy.own.entity.Users;
+import com.cy.own.entity.user.Users;
 
 public interface UserService {
 

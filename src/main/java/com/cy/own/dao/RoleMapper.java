@@ -1,6 +1,7 @@
 package com.cy.own.dao;
 
-import com.cy.own.entity.Role;
+import com.cy.own.entity.role.Role;
+import com.cy.own.entity.valobj.role.RoleVo;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface RoleMapper {
     int updateByPrimaryKeySelective(Role record);
 
     int updateByPrimaryKey(Role record);
+
+    List<RoleVo> getRoles();
 }

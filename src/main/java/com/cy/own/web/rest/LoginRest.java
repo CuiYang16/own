@@ -1,8 +1,8 @@
 package com.cy.own.web.rest;
 
 import com.cy.own.dto.ResponseDto;
-import com.cy.own.entity.Users;
-import com.cy.own.service.UserService;
+import com.cy.own.entity.user.Users;
+import com.cy.own.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

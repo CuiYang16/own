@@ -1,6 +1,6 @@
 package com.cy.own.dao;
 
-import com.cy.own.entity.Users;
+import com.cy.own.entity.user.Users;
 
 import java.util.List;
 

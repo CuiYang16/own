@@ -1,6 +1,6 @@
 package com.cy.own.common.session;
 
-import com.cy.own.entity.Users;
+import com.cy.own.entity.user.Users;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 

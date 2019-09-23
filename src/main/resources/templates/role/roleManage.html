@@ -3,35 +3,12 @@
 <head th:include="common/scriptInc">
     <meta charset="utf-8">
     <title>角色管理</title>
-    <style type="text/css">
-        p {
-            margin-bottom: 20px;
-        }
-        .layui-form-checkbox[lay-skin=primary] {
-            padding-left: 0
-        }
-        /*.layui-treetable i.folder-close{*/
-        /*    background: url('/static/app/module/treetable/folder-closed.gif') 0 0 no-repeat;*/
-        /*    padding: 0 0 0 16px;*/
-        /*}*/
 
-        /*.layui-treetable i.folder{*/
-        /*    background: url(/static/app/module/treetable/folder.gif) 0 0 no-repeat;*/
-        /*    padding: 0 0 0 16px;*/
-        /*}*/
-
-        /*.layui-treetable i.leaf{*/
-        /*    background: url(/static/app/module/treetable/file.gif) 0 0 no-repeat;*/
-        /*    padding: 0 0 0 16px;*/
-        /*}*/
-    </style>
 </head>
 
 <body class="layui-row">
-<div class="layui-col-md3" style="padding: 10px 10px;">
-    <!-- <div id="demo"></div> -->
-</div>
-<div class="layui-col-md6" style="padding: 10px 10px;">
+
+<div class="layui-col-md12" style="padding: 10px 10px;">
     <fieldset class="layui-elem-field layui-field-title">
         <legend>基本功能</legend>
         <div class="layui-field-box">
@@ -66,278 +43,50 @@
         <legend>编辑功能</legend>
         <div class="layui-field-box">
             <p>
-                <button class="layui-btn layui-btn-sm" id="addNode2" onmouseover="showTips4()">添加根节点</button>
-                <button class="layui-btn layui-btn-sm" id="addNode" onmouseover="showTips5()">添加子节点</button>
+                <button class="layui-btn layui-btn-sm" id="addRootNode" onmouseover="showTips4()">添加根节点</button>
+                <button class="layui-btn layui-btn-sm" id="addChildrenNode" onmouseover="showTips5()">添加子节点</button>
                 <button class="layui-btn layui-btn-sm layui-btn-normal" id="editNode" onmouseover="showTips6()">编辑节点</button>
                 <button class="layui-btn layui-btn-sm layui-btn-danger" id="removeNode" onmouseover="showTips7()">删除节点</button>
             </p>
         </div>
     </fieldset>
 
-    <div id="demo"></div>
+    <div id="roles"></div>
+    <div id="page-content"></div>
 </div>
 <div class="layui-col-md3" style="padding: 10px 10px;"></div>
 </body>
-
-<script th:src="@{/static/app/module/treetable/demo.js}" type="text/javascript" charset="UTF-8"></script>
-<script type="text/javascript">
-
-    function del(row) {
-        alert(row.id)
+<style type="text/css">
+    p {
+        margin-bottom: 20px;
+    }
+    .layui-form-checkbox[lay-skin=primary] {
+        padding-left: 0
+    }
+    .layui-laypage {
+        position: relative;
+        width: 100%;
+        padding: 7px 7px 0;
+        height: 41px;
+        font-size: 12px;
+        white-space: nowrap;
+        margin: 0;
+    }
+    .layui-table, .layui-table-view {
+        margin-top: 10px;
+        margin-bottom: 0;
+    }
+    .layui-laypage a,.layui-laypage span {
+        border: none;
+    }
+    #page-content{
+        position: relative;
+        border: 1px solid #f0f0f0;
     }
 
-    var layout = [
-        { name: '菜单名称', treeNodes: true, headerClass: 'value_col', colClass: 'value_col', style: '' },
-        { name: 'id', field: 'id', headerClass: 'value_col', colClass: 'value_col', style: ''},
-        { name: '文本', field: 'text', headerClass: 'value_col', colClass: 'value_col', style: ''},
-        {
-            name: '操作',
-            headerClass: 'value_col',
-            colClass: 'value_col',
-            style: 'width: 20%',
-            render: function(row) {
-                return "<a class='layui-btn layui-btn-danger layui-btn-sm' onclick='del(" + row + ")'><i class='layui-icon'>&#xe640;</i> 删除</a>"; //列渲染
-            }
-        },
-    ];
-    layui.config({
-        base: '/static/app/module/treetable/' //插件路径
-    }).extend({
-        treetable: 'treetable'
-    });
-    layui.use(['form', 'treetable', 'layer'], function() {
-        var layer = layui.layer, form = layui.form, $ = layui.jquery;
-
-        var tree = layui.treetable({
-            elem: '#demo', //传入元素选择器
-            spreadable: false, //设置是否全展开，默认不展开
-            checkbox : true,
-            nodes: [{
-                "id": "1",
-                "name": "父节点1",
-                "text":"测试",
-                "checked" : false,
-                "children": [{
-                    "id": "11",
-                    "name": "子节点11",
-                    "text":""
-                },
-                    {
-                        "id": "12",
-                        "name": "子节点12",
-                        "text":"",
-                        "children": []
-                    }
-                ]
-            },
-                {
-                    "id": "2",
-                    "name": "父节点2",
-                    "text":"",
-                    "checked" : true,
-                    "children": [{
-                        "id": "21",
-                        "name": "子节点21",
-                        "text":"",
-                        "children": [{
-                            "id": "211",
-                            "name": "子节点211",
-                            "text":""
-                        }]
-                    }]
-                },
-                {
-                    "id": "3",
-                    "name": "父节点3",
-                    "text":"",
-                }
-            ],
-            layout: layout,
-            callback: {
-                beforeCheck : treetableBeforeCheck,
-                onCheck : treetableOnCheck,
-                beforeCollapse : treetableBeforeCollapse,
-                onCollapse : treetableOnCollapse,
-                beforeExpand : treetableBeforeExpand,
-                onExpand : treetableOnExpand,
-            }
-        });
-
-        function treetableBeforeCheck(node){
-            alert("回调方法treetableBeforeCheck");
-            return true;
-        };
-        function treetableOnCheck(node){
-            alert("回调方法treetableOnCheck");
-        };
-        function treetableBeforeCollapse(){
-            alert("回调方法treetableBeforeCollapse");
-            return true;
-        };
-        function treetableOnCollapse(){
-            alert("回调方法treetableOnCollapse");
-        };
-        function treetableBeforeExpand(){
-            alert("回调方法treetableBeforeExpand");
-            return true;
-        };
-        function treetableOnExpand(){
-            alert("回调方法treetableOnExpand");
-        };
-
-        form.render();
-
-        $('#collapse').on('click', function() {
-            tree.collapse();
-        });
-
-        $('#expand').on('click', function() {
-            tree.expand();
-        });
-
-        $('#selected').on('click', function() {
-            console.log(tree.getSelected());
-            alert(JSON.stringify(tree.getSelected()));
-        });
-
-        $('#unSelected').on('click', function() {
-            console.log(tree.getUnSelected());
-            alert(JSON.stringify(tree.getUnSelected()));
-        });
-
-        $('#editNode').on('click', function() {
-            var node = tree.getNode("3");
-            node.name = '我就是变个名字';
-            tree.editNodeName(node);
-        });
-
-        $('#removeNode').on('click', function() {
-            var node = tree.getNode("2");
-            tree.removeNode(node);
-        });
-
-        $('#getNode').on('click', function() {
-            var node = tree.getNode("2");
-            alert(JSON.stringify(node));
-        });
-
-        $('#getNodeByParam').on('click', function() {
-            var node = tree.getNodeByParam("name", "子节点21", null);
-            alert(JSON.stringify(node));
-        });
-
-        $('#all').on('click', function() {
-            alert(JSON.stringify(tree.getNodes()));
-        });
-
-        $('#addNode').on('click', function() {
-            tree.addNode(tree.getNode("2"), {
-                "id": "22", "name": "子节点22", "text":"", "children": [{
-                    "id": "221",
-                    "name": "子节点221",
-                    "text":"",
-                    "children": [{
-                        "id": "2211",
-                        "name": "子节点2211",
-                        "text":"",
-                        "children": [{
-                            "id": "22111",
-                            "name": "子节点22111",
-                            "text":"",
-                        }]
-                    }]
-                },
-                    {
-                        "id": "222",
-                        "name": "子节点222",
-                        "text":"",
-                        "children": [{
-                            "id": "2221",
-                            "name": "子节点2221",
-                            "text":"",
-                            "children": [{
-                                "id": "22211",
-                                "name": "子节点22211",
-                                "text":"",
-                            }]
-                        }]
-                    }]
-            });
-        });
-
-        $('#addNode2').on('click', function() {
-            tree.addNode(null, {
-                "id": "4", "name": "父节点4", "text":"", "children": [{
-                    "id": "41",
-                    "name": "子节点41",
-                    "text":"",
-                    "children": [{
-                        "id": "411",
-                        "name": "子节点411",
-                        "text":"",
-                        "children": [{
-                            "id": "4111",
-                            "name": "子节点4111",
-                            "text":"",
-                        }]
-                    }]
-                },
-                    {
-                        "id": "42",
-                        "name": "子节点42",
-                        "text":"",
-                        "children": [{
-                            "id": "421",
-                            "name": "子节点421",
-                            "text":"",
-                            "children": [{
-                                "id": "4211",
-                                "name": "子节点4211",
-                                "text":"",
-                            }]
-                        }]
-                    }]
-            });
-        });
-
-        $('#destory').on('click', function() {
-            tree.destory();
-        });
-
-        $('#expandNode').on('click', function() {
-            tree.expandNode(tree.getNode("2"), false);
-        });
-
-        $('#collapseNode').on('click', function() {
-            tree.collapseNode(tree.getNode("2"), false);
-        });
-
-        $('#checkNode').on('click', function() {
-            tree.checkNode(tree.getNode("1"), true);
-        });
-
-        $('#uncheckNode').on('click', function() {
-            tree.checkNode(tree.getNode("1"), false);
-        });
-
-        $('#disableNode').on('click', function() {
-            tree.setChkDisabled(tree.getNode("1"), true);
-        });
-
-        $('#ableNode').on('click', function() {
-            tree.setChkDisabled(tree.getNode("1"), false);
-        });
-
-        $('#checkAllNode').on('click', function() {
-            tree.checkAllNodes(true);
-        });
-
-        $('#unCheckAllNode').on('click', function() {
-            tree.checkAllNodes(false);
-        });
-
-    });
-
+</style>
+<script th:src="@{/static/app/module/treetable/demo.js}" type="text/javascript" charset="UTF-8"></script>
+<script type="text/javascript" th:src="@{/static/app/js/role/roleManage.js}" >
 
 </script>
 
