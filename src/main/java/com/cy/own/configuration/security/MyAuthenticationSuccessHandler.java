@@ -1,6 +1,6 @@
 package com.cy.own.configuration.security;
 
-import com.cy.own.dao.UsersMapper;
+import com.cy.own.dao.user.UsersMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

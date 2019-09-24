@@ -2,13 +2,14 @@ layui.use('table', function () {
     var table = layui.table;
     var $ = layui.$;
     //第一个实例
-    table.render({
+    var userTableIns=table.render({
         elem: '#users-table'
         , id: 'usersTable'
         , url: '/users/get-users' //数据接口
+        ,height: 'full-40'
         , response: {
             statusName: 'code',
-            statusCode: 23001 //规定成功的状态码，默认：0
+            statusCode: 21004 //规定成功的状态码，默认：0
         }
         , method: 'get'
         , toolbar: '#headToolbar' //开启头部工具栏，并为其绑定左侧模板
@@ -97,7 +98,9 @@ layui.use('table', function () {
             },
             {title: '操作', fixed: 'right', width: 150, align: 'center', toolbar: '#userBar'}
 
-        ]]
+        ]],done: function(res, curr, count){
+            this.where={};
+        }
     });
 //头工具栏事件
     table.on('toolbar(userTableFilter)', function (obj) {
@@ -192,11 +195,13 @@ layui.use('table', function () {
                 break;
             case 'searchUser':
                 var idOrName = $('#idOrName').val();
+
                 if (idOrName != null && idOrName != '') {
                     table.reload('usersTable', {
                             where: {'idOrName': idOrName}
                         }
                     );
+                    $('#idOrName').val('');
                 } else {
                     layer.msg('查询所有用户！');
                     table.reload('usersTable');

@@ -3,7 +3,7 @@ spring:
   druid:
     ##数据库连接信息
     datasource:
-      url: jdbc:mysql://39.108.254.80:3306/own?useSSL=false
+      url: jdbc:mysql://39.108.254.80:3306/own?useSSL=false&useOldAliasMetadataBehavior=true
       username: root
       password: Mysql_666
       driver-class-name: com.mysql.jdbc.Driver

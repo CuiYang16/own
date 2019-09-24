@@ -11,7 +11,7 @@ server:
 info:
   version: "1.0.0"
 mybatis:
-  mapperLocations: classpath:mapper/*Mapper.xml
+  mapperLocations: classpath:mapper/**/*Mapper.xml
 
 
 spring:

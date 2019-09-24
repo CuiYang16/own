@@ -1,4 +1,4 @@
-package com.cy.own.dao;
+package com.cy.own.dao.user;
 
 import com.cy.own.entity.user.Users;
 

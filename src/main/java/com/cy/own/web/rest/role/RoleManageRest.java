@@ -5,6 +5,7 @@ import com.cy.own.service.role.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -14,8 +15,13 @@ public class RoleManageRest {
     @Autowired
     private RoleService roleService;
 
-    @RequestMapping(value = "/get-roles",method = RequestMethod.GET)
-    public ResponseDto getAllRole(){
-        return roleService.getAllRoles(0,0);
+    @RequestMapping(value = "/get-tree-roles",method = RequestMethod.GET)
+    public ResponseDto getTreeRole(){
+        return roleService.getRoles();
+    }
+
+    @RequestMapping(value = "/get-table-roles",method = RequestMethod.GET)
+    public ResponseDto getTableRole(int page,int limit,@RequestParam(value = "parentId",required = false)String parentId,@RequestParam(value = "idOrName",required = false)String idOrName){
+        return roleService.getRoles(page,limit,parentId,idOrName);
     }
 }

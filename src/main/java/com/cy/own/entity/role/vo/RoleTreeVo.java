@@ -1,31 +1,36 @@
-package com.cy.own.entity.role;
+package com.cy.own.entity.role.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Date;
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+import java.util.List;
+
 @Getter
 @Setter
-public class Role {
+@AllArgsConstructor
+@NoArgsConstructor
+public class RoleTreeVo{
+
     /**
-     * 
+     *
      */
     private String id;
 
     /**
      * 角色名
      */
-    private String roleName;
+    private String title;
 
     /**
      * 描述
      */
-    private String description;
+    private String field;
 
     /**
      * 创建时间
@@ -35,14 +40,14 @@ public class Role {
 
 
 
-    private Boolean isDisabled;
+    private Boolean disabled;
 
     /**
      * 父角色id
      */
     private String parentId;
 
-
+    private List<RoleTreeVo> children;
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

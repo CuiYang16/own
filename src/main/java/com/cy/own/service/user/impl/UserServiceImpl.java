@@ -1,6 +1,6 @@
 package com.cy.own.service.user.impl;
 
-import com.cy.own.dao.UsersMapper;
+import com.cy.own.dao.user.UsersMapper;
 import com.cy.own.dto.ResponseDto;
 import com.cy.own.entity.user.Users;
 import com.cy.own.service.user.UserService;

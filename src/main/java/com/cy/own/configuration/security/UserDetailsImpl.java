@@ -1,8 +1,8 @@
 package com.cy.own.configuration.security;
 
 import com.cy.own.dao.PermissionMapper;
-import com.cy.own.dao.RoleMapper;
-import com.cy.own.dao.UsersMapper;
+import com.cy.own.dao.role.RoleMapper;
+import com.cy.own.dao.user.UsersMapper;
 import com.cy.own.entity.Permission;
 import com.cy.own.entity.role.Role;
 import com.cy.own.entity.user.Users;

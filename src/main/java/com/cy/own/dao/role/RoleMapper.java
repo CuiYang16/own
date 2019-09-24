@@ -1,7 +1,8 @@
-package com.cy.own.dao;
+package com.cy.own.dao.role;
 
 import com.cy.own.entity.role.Role;
-import com.cy.own.entity.role.vo.AllRoleVo;
+import com.cy.own.entity.role.vo.RoleTreeVo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,5 +21,7 @@ public interface RoleMapper {
 
     int updateByPrimaryKey(Role record);
 
-    List<AllRoleVo> selectRoles();
+    List<RoleTreeVo> getRoles();
+
+    List<Role> selectAllRoles(@Param("parentId") String parentId, @Param("idOrName") String idOrName);
 }
