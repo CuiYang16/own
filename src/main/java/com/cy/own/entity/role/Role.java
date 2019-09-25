@@ -5,13 +5,15 @@ import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.io.Serializable;
 import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Role {
+public class Role implements Serializable {
+    private static final long serialVersionUID = 8611890893741377176L;
     /**
      * 
      */

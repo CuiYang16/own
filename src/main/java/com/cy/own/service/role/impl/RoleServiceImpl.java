@@ -39,6 +39,7 @@ public class RoleServiceImpl implements RoleService {
             return dto;
         }catch (Exception e){
             e.printStackTrace();
+
             ResponseDto dto = ResponseDto.builder().code(Integer.valueOf(env.getProperty("code.role.select_table_role_fail", "52002")))
                     .msg(env.getProperty("msg.role.select_table_role_fail", "查询失败，请刷新重试！")).count(0)
                    .build();
