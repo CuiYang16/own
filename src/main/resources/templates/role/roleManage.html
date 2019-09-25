@@ -13,7 +13,18 @@
             <div class="layui-card role-tree">
                 <div class="layui-card-header">角色树</div>
                 <div class="layui-card-body">
-                    <div id="roles-tree" class="demo-tree-more"></div>
+                    <div class="layui-btn-group tree-menu">
+                        <button type="button" class="layui-btn layui-btn-xs" id="unExpandBtn">
+                            <i class="layui-icon">&#xe655;</i>
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-xs" id="expandBtn">
+                            <i class="layui-icon">&#xe630;</i>
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-normal layui-btn-xs" id="refreshBtn">
+                            <i class="layui-icon">&#xe9aa;</i>
+                        </button>
+                    </div>
+                    <div class="eleTree ele1" id="roles-tree" lay-filter="roles-tree"></div>
                 </div>
             </div>
 
@@ -58,6 +69,9 @@
     .role-table{
         min-height: 96vh;
         max-height: 96vh;
+    }
+    .tree-menu{
+        margin-bottom: 10px;
     }
 </style>
 
