@@ -9,9 +9,8 @@
     <div class="layui-row">
         <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
             <form class="layui-form layui-form-pane" action="" id="userForm" lay-filter="userForm">
-                <input type="text" name="id"
+                <input type="text" name="id" id="roleId"
                        class="layui-input" style="display: none;">
-                <label id=""></label>
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-block">
@@ -93,6 +92,12 @@
     </div>
 </div>
 </body>
+
+<style type="text/css">
+    body{
+        padding-top: 10px;
+    }
+</style>
 <script>
     layui.config({
         base: '/static/app/module/' //插件路径
@@ -127,24 +132,6 @@
                 if (/^\d+\d+\d$/.test(value)) {
                     return '用户名不能全为数字';
                 }
-                // $.ajax({
-                //     url:"/user/val-user-name",
-                //     type:'get',
-                //     async: false,
-                //     data:{"userName":$("#userName").val()},
-                //     success:function(result){
-                //         if(result.code==52002){
-                //             layer.tips(result.msg, '#userName', {
-                //                 tips: [3, 'red'],
-                //                 time: 4000
-                //             });
-                //             return false;
-                //         }
-                //     },
-                //     error:function(result){
-                //         console.log(result);
-                //     }
-                // });
 
             }
         });

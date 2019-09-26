@@ -4,22 +4,19 @@
     <resultMap id="BaseResultMap" type="com.cy.own.entity.role.Role">
         <id column="id" property="id" jdbcType="VARCHAR"/>
         <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+        <result column="role_code" property="roleCode" jdbcType="VARCHAR"/>
+        <result column="role_level" property="roleLevel" jdbcType="INTEGER"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="is_disabled" property="isDisabled" jdbcType="TINYINT"/>
         <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, role_name, description, create_time, parent_id,is_disabled
+    id, role_name, description, create_time, parent_id,is_disabled,role_code,role_level
   </sql>
 
-    <resultMap id="RoleVoMap" type="com.cy.own.entity.role.vo.RoleTreeVo">
-        <id column="id" property="id" jdbcType="VARCHAR"/>
-        <result column="role_name" property="title" jdbcType="VARCHAR"/>
-        <result column="description" property="field" jdbcType="VARCHAR"/>
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
-        <result column="is_disabled" property="disabled" jdbcType="TINYINT"/>
+    <resultMap id="RoleVoMap" type="com.cy.own.entity.role.vo.RoleTreeVo" extends="BaseResultMap">
+
         <collection property="children" column="id"
                     ofType="com.cy.own.entity.role.vo.RoleTreeVo"
                     select="selectRoleChildren"/>
@@ -42,12 +39,12 @@
 
     <!--    获取所有一级角色信息-->
     <select id="getRoles" resultMap="RoleVoMap">
-        select id, role_name, description,parent_id,is_disabled from role where parent_id=-1
+        select <include refid="Base_Column_List"/> from role where parent_id=-1
 
     </select>
     <!--    子查询-->
     <select id="selectRoleChildren" resultMap="RoleVoMap" parameterType="string">
-   select id, role_name, description, parent_id,is_disabled  from role where parent_id = #{id,jdbcType=VARCHAR}
+   select <include refid="Base_Column_List"/>  from role where parent_id = #{id,jdbcType=VARCHAR}
 </select>
 
 <!--    查询所有角色信息-->
@@ -91,8 +88,17 @@
             <if test="createTime != null">
                 create_time,
             </if>
+            <if test="roleLevel != null">
+                role_level,
+            </if>
+            <if test="roleCode != null">
+                role_code,
+            </if>
             <if test="parentId != null">
                 parent_id,
+            </if>
+            <if test="isDisabled != null">
+                is_disabled,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -108,8 +114,19 @@
             <if test="createTime != null">
                 #{createTime,jdbcType=TIMESTAMP},
             </if>
+
+            <if test="roleLevel != null">
+                #{roleLevel,jdbcType=INTEGER},
+            </if>
+            <if test="roleCode != null">
+                #{roleCode,jdbcType=VARCHAR},
+            </if>
+
             <if test="parentId != null">
                 #{parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="isDisabled != null">
+                #{isDisabled,jdbcType=TINYINT},
             </if>
         </trim>
     </insert>

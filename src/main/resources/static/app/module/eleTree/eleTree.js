@@ -1141,7 +1141,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 $("#tree-menu").find("li.append,li.insertAfter,li.insertBefore").hide();
                 $("#tree-menu").find(":not(li.append,li.insertAfter,li.insertBefore)").show();
                 $("#tree-menu").css({
-                    left: e.clientX+$(document).scrollLeft(),
+                    left: e.clientX+$(document).scrollLeft() -40,
                     top: e.clientY+$(document).scrollTop()
                 }).show();
                 // 复制

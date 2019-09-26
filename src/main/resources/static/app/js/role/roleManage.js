@@ -4,6 +4,7 @@ layui.config({
     eleTree: 'eleTree'
 });
 
+
 layui.use(['tree', 'util', 'table', 'eleTree'], function () {
     var tree = layui.tree
         , layer = layui.layer,
@@ -15,14 +16,15 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
         elem: '#roles-tree',
         highlightCurrent:true,
         showLine:true,
+       expandOnClickNode:false,
         url:'/roles/get-tree-roles',
         method :'get',
         request: {
-            name: "title",
+            name: "roleName",
             key: "id",
             children: "children",
             checked: "checked",
-            disabled: "disabled",
+            disabled: "isDisabled",
             isLeaf: "isLeaf"
         },
         response: {
@@ -45,6 +47,7 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
     });
     $('#refreshBtn').click(function(){
         el.reload();
+        roleTableIns.reload();
     });
 
 // 节点点击事件
@@ -54,19 +57,83 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
         roleTableIns.reload({where:{'parentId':currentData.id}});
     })
 //自定义右键菜单
+
+    function editAndAdd(options){
+        layer.open({
+            type: 2,
+            title: options.title,
+            shadeClose: false,
+            shade: 0.8,
+            area: ['45vw', '80vh'],
+            btn: ['确定', '重置'],
+            content: '/roles/create-role',
+            success: function (layero, index) {
+                var iframe = window['layui-layer-iframe' + index];//拿到iframe元素
+                //不可修改用户名，只读
+                layero.find('iframe').contents().find('#roleId').css("display",'none');
+
+            },
+            yes: function (index, layero) {
+
+                var iframe = window['layui-layer-iframe' + index];
+                var submitID = 'submitRoleForm',
+                    submit = layero.find('iframe').contents().find('#' + submitID);
+
+                //监听提交
+                iframe.layui.form.on('submit(' + submitID + ')', function (data) {
+                    var field = data.field; //获取提交的字段
+                    console.log(field)
+
+                    $.ajax({
+                        url:'/roles/insert-role',
+                        type :'post',
+                        data : {
+                            'roleName':field.roleName,
+                            'description':field.description,
+                            'isDisabled':field.isDisabled,
+                            'roleCode':field.roleCode,
+                            'level':options.nowData.roleLevel,
+                            'parentId':options.type=='same'?options.nowData.parentId:options.nowData.id,
+                            'addType':options.type
+                        },
+                        success : function(data){
+                            console.log(data)
+                            if(data.code==22003){
+                                el.reload();
+                                roleTableIns.reload();
+                            }
+
+                        },
+                        error : function(xhr, status, error) {
+                            console.log(status);
+                        }
+                    });
+                    layer.close(index);
+                });
+                submit.trigger('click');
+                //return false;
+            },
+            btn2: function (index, layero) {
+                var iframe = window['layui-layer-iframe' + index];
+                var submitID = 'resetRoleForm',
+                    submit = layero.find('iframe').contents().find('#' + submitID);
+                submit.trigger('click');
+                //禁止关闭弹出层
+                return false;
+            }
+
+        });
+        $('.layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    }
     eleTree.on("nodeAddSameLevel(roles-tree)",function(d) {
-        console.group("自定义右键菜单回调nodeTest:")
-        console.log(d.data);    // 点击节点对于的数据
-        console.log(d.node);    // 点击的dom节点
-        console.log(this);      // 与d.node相同
-        console.groupEnd();
+
+        editAndAdd({title:'新增同级角色',nowData: d.data,type:'same'});
     });
     eleTree.on("nodeAddChildrenLevel(roles-tree)",function(d) {
-        console.group("自定义右键菜单回调nodeAddChildrenLevel:")
-        console.log(d.data);    // 点击节点对于的数据
-        console.log(d.node);    // 点击的dom节点
-        console.log(this);      // 与d.node相同
-        console.groupEnd();
+        editAndAdd({title:'新增子角色',nowData: d.data,type:'children'});
     });
     eleTree.on("nodeEditRole(roles-tree)",function(d) {
         console.group("自定义右键菜单回调nodeEditRole:")
@@ -82,51 +149,8 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
         console.log(this);      // 与d.node相同
         console.groupEnd();
     })
-    // $.ajax({
-    //     url: '/roles/get-tree-roles',
-    //     type: 'get',
-    //     async: false,
-    //     success: function (result) {
-    //         if (result.code == 22001) {
-    //             //树
-    //             tree.render({
-    //                 elem: '#roles-tree'
-    //                 , data: result.data
-    //                 , showCheckbox: false  //是否显示复选框
-    //                 , id: 'demoId1'
-    //                 , edit: ['add', 'update', 'del']
-    //                 , isJump: false //是否允许点击节点时弹出新窗口跳转
-    //                 , click: function (obj) {
-    //                     var data = obj.data;  //获取当前点击的节点数据
-    //                     layer.msg(data.id);
-    //                     roleTableIns.reload({where:{'parentId':data.id}});
-    //                 }
-    //                 , operate: function (obj) {
-    //                     var type = obj.type; //得到操作类型：add、edit、del
-    //                     var data = obj.data; //得到当前节点的数据
-    //                     var elem = obj.elem; //得到当前节点元素
-    //
-    //                     //Ajax 操作
-    //                     var id = data.id; //得到节点索引
-    //                     if (type === 'add') { //增加节点
-    //                         //返回 key 值
-    //                         layer.msg(id);
-    //                         return 28;
-    //                     } else if (type === 'update') { //修改节点
-    //                         console.log(elem.find('.layui-tree-txt').html()); //得到修改后的内容
-    //                     } else if (type === 'del') { //删除节点
-    //
-    //                     }
-    //                     ;
-    //                 }
-    //             });
-    //         }
-    //     },
-    //     error: function (result) {
-    //         console.log(result);
-    //         data = null;
-    //     }
-    // })
+
+
 
 
     //表格
@@ -146,6 +170,8 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
             {type: 'checkbox', fixed: 'left'},
             {field: 'id', title: 'ID', width: 80, fixed: 'left'}
             , {field: 'roleName', title: '角色名', align: 'center'}
+            , {field: 'roleCode', title: '角色代码', align: 'center'}
+            , {field: 'roleLevel', title: '角色级别', align: 'center'}
             , {
                 field: 'isDisabled', title: '是否可用', align: 'center', templet: function (d) {
                     return !d.isDisabled ? '可用' : '<span style="color: red; font-weight: 800">不可用</span> ';

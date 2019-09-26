@@ -1,7 +1,5 @@
 package com.cy.own.web.controller.role;
 
-import com.cy.own.service.role.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -14,5 +12,16 @@ public class RoleManageController {
     public String toRoleManage(){
         return "/role/roleManage";
     }
+
+    @RequestMapping("edit-role")
+    public String toEditRole(){
+        return "/role/editAndAddRole";
+    }
+
+    @RequestMapping("create-role")
+    public String toAddRole(){
+        return "/role/editAndAddRole";
+    }
+
 
 }

@@ -22,6 +22,9 @@ public class Role {
      */
     private String roleName;
 
+    private String roleCode;
+
+    private int roleLevel;
     /**
      * 描述
      */

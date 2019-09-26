@@ -51,7 +51,7 @@ public class UserDetailsImpl implements UserDetailsService {
             roles.forEach(role -> {
                 if (role != null && role.getRoleName() != null) {
                     //角色名需要加ROLE_前缀
-                    grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+                    grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleCode()));
                 }
             });
             permissions.forEach(permission -> {

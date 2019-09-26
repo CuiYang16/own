@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="common/scriptInc">
+    <meta charset="UTF-8">
+    <title>编辑添加角色</title>
+</head>
+<body>
+<div class="layui-fluid">
+<div class="layui-row">
+    <div class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+        <form class="layui-form layui-form-pane" id="roleForm" lay-filter="roleForm">
+
+            <input type="text" name="id"
+                   class="layui-input" style="display: none;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="roleName" id="roleName" required lay-verify="roleName" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色代码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="roleCode" id="roleCode" required lay-verify="roleCode" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否可用</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="isDisabled" value="0" title="可用">
+                    <input type="radio" name="isDisabled" value="1" title="不可用">
+
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色描述</label>
+                <div class="layui-input-block">
+                    <input type="text" name="description" id="description" required lay-verify="description" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-hide">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="submitRoleForm" id="submitRoleForm">提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary" id="resetRoleForm">重置</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+</div>
+</body>
+<style type="text/css">
+    body{
+        padding-top: 10px;
+    }
+</style>
+<script type="text/javascript">
+    layui.config({
+        base: '/static/app/module/' //插件路径
+    }).extend({
+        enhanceform: 'enhanceform'
+    });
+    layui.use(['form', 'enhanceform'], function () {
+        var form = layui.form;
+        var enhanceForm = layui.enhanceform;
+        var $ = layui.$;
+
+        var enhance = new enhanceForm({
+            elem: '#roleForm' //表单选择器
+        });
+        window.editRoleDetail = function (data) {
+            enhance.filling(JSON.parse(data));
+        }
+
+        form.verify({
+            roleName:function (value, item) {
+                if(value.length >8&& value.length <=0){
+                    return "角色名称长度为1~8个字符";
+                }
+            },
+            roleCode:function (value, item) {
+                if(/(^[a-zA-Z]w{3,10}$)/.test(value)){
+                    return "字母开头的3~10位字母数字下划线组成字符串";
+                }
+            }
+        });
+    })
+</script>
+</html>
