@@ -21,6 +21,8 @@ code:
     select_table_roles_fail: 52002
     insert_role: 22003
     insert_role_fail: 52003
+    update_role: 22004
+    updata_role_fail: 52004
 msg:
   user:
     login_success: 登录成功
@@ -42,3 +44,5 @@ msg:
     select_table_roles_fail: 表格查询失败，请刷新重试！
     insert_role: 新增角色成功!
     insert_role_fail: 新增角色失败，请刷新重试！
+    update_role: 编辑角色信息成功！
+    updata_role_fail: 编辑角色信息失败，请刷新重试！

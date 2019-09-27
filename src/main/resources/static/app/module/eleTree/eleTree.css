@@ -2,7 +2,8 @@
 .eleTree{
     position: relative;
 }
-.eleTree-hide{
+.eleTree-hide,
+.eleTree-search-hide{
     display: none;
 }
 .eleTree-loadData{
@@ -55,6 +56,24 @@
     font-size: 12px;
 }
 
+/* 线条样式 */
+.eleTree-node{
+    position: relative;
+}
+.eleTree-node .eleTree-node-verticalline{
+    position: absolute;
+    width: 0;
+    height: 100%;
+    border: 1px dotted #ccc;
+    z-index: 1;
+}
+.eleTree-node .eleTree-node-horizontalline{
+    position: absolute;
+    height: 0;
+    top: 13px;
+    border: 1px dotted #ccc;
+    z-index: 1;
+}
 
 /* checkbox第三种状态 */
 input.eleTree-hideen[type=checkbox]{
@@ -118,6 +137,7 @@ input.eleTree-hideen[type=checkbox]{
     border-color: #dcdfe6;
 }
 
+/*修改*/
 #tree-menu{
     margin: 0;
     /*padding: 2px;*/
@@ -159,3 +179,4 @@ input.eleTree-hideen[type=checkbox]{
     font-size: 12px;
     line-height: 2em;
 }
+/* #endregion */

@@ -56,9 +56,11 @@
             </if>
 
             <if test="idOrName!=null">
-                and (id = #{idOrName,jdbcType=VARCHAR} or role_name=#{idOrName,jdbcType=VARCHAR})
+                and (id = #{idOrName,jdbcType=VARCHAR} or role_name=#{idOrName,jdbcType=VARCHAR} or role_code=#{idOrName,jdbcType=VARCHAR})
             </if>
         </where>
+
+        order by role_level asc
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
@@ -140,10 +142,21 @@
                 description = #{description,jdbcType=VARCHAR},
             </if>
             <if test="createTime != null">
-                create_time = #{createTime,jdbcType=TIMESTAMP},
+                create_time =  #{createTime,jdbcType=TIMESTAMP},
             </if>
+
+            <if test="roleLevel != null and roleLevel != 0">
+                role_level=#{roleLevel,jdbcType=INTEGER},
+            </if>
+            <if test="roleCode != null">
+                role_code=#{roleCode,jdbcType=VARCHAR},
+            </if>
+
             <if test="parentId != null">
-                parent_id = #{parentId,jdbcType=VARCHAR},
+                parent_id =  #{parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="isDisabled != null">
+                is_disabled=#{isDisabled,jdbcType=TINYINT},
             </if>
         </set>
         where id = #{id,jdbcType=VARCHAR}

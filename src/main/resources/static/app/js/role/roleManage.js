@@ -1,24 +1,35 @@
 layui.config({
-    base: '/static/app/module/eleTree/' //插件路径
+    base: '/static/app/module/' //插件路径
 }).extend({
-    eleTree: 'eleTree'
+    eleTree: 'eleTree/eleTree',
+    soulTable: 'soulTable/soulTable',
+    tableFilter: 'soulTable/tableFilter',
+    tableChild: 'soulTable/tableChild',
+    tableMerge: 'soulTable/tableMerge',
+    excel: 'soulTable/excel'
 });
+// layui.config({
+//     base: '/static/app/module/',   // 模块所在目录
+//     // version: 'v1.3.28' // 插件版本号
+// }).extend({
+//     soulTable: 'soulTable',
+// });
 
-
-layui.use(['tree', 'util', 'table', 'eleTree'], function () {
+layui.use(['tree', 'util', 'table', 'eleTree', 'soulTable'], function () {
     var tree = layui.tree
         , layer = layui.layer,
         table = layui.table,
         eleTree = layui.eleTree,
+        soulTable = layui.soulTable,
         $ = layui.$;
 
-   var el =  eleTree.render({
+    var el = eleTree.render({
         elem: '#roles-tree',
-        highlightCurrent:true,
-        showLine:true,
-       expandOnClickNode:false,
-        url:'/roles/get-tree-roles',
-        method :'get',
+        highlightCurrent: true,
+        showLine: true,
+        expandOnClickNode: false,
+        url: '/roles/get-tree-roles',
+        method: 'get',
         request: {
             name: "roleName",
             key: "id",
@@ -32,33 +43,38 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
             statusCode: 22001,
             dataName: "data"
         },
-       contextmenuList:[{eventName: "addSameLevel", text: "新增同级角色"},
-           {eventName: "addChildrenLevel", text: "新增子级角色"},
-           {eventName: "editRole", text: "编辑角色"},
-           {eventName: "delRole", text: "删除角色"},
-           ]
+        contextmenuList: [{eventName: "addSameLevel", text: "新增同级角色"},
+            {eventName: "addChildrenLevel", text: "新增子级角色"},
+            {eventName: "editRole", text: "编辑角色"},
+            {eventName: "delRole", text: "删除角色"},
+        ],
+        searchNodeMethod: function(value,data) {
+            if (!value) return true;
+            return data.label.indexOf(value) !== -1;
+        }
     })
 
-    $('#unExpandBtn').click(function(){
+    $('#unExpandBtn').click(function () {
         el.unExpandAll();
     });
-    $('#expandBtn').click(function(){
+    $('#expandBtn').click(function () {
         el.expandAll();
     });
-    $('#refreshBtn').click(function(){
+    $('#refreshBtn').click(function () {
         el.reload();
         roleTableIns.reload();
     });
 
 // 节点点击事件
     //currentData: {…}, parentData: {…}
-    eleTree.on("nodeClick(roles-tree)",function(d) {
+    eleTree.on("nodeClick(roles-tree)", function (d) {
         var currentData = d.data.currentData;
-        roleTableIns.reload({where:{'parentId':currentData.id}});
+        roleTableIns.reload({where: {'parentId': currentData.id}});
     })
+
 //自定义右键菜单
 
-    function editAndAdd(options){
+    function editAndAdd(options) {
         layer.open({
             type: 2,
             title: options.title,
@@ -66,12 +82,13 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
             shade: 0.8,
             area: ['45vw', '80vh'],
             btn: ['确定', '重置'],
-            content: '/roles/create-role',
+            content: options.content,
             success: function (layero, index) {
                 var iframe = window['layui-layer-iframe' + index];//拿到iframe元素
-                //不可修改用户名，只读
-                layero.find('iframe').contents().find('#roleId').css("display",'none');
-
+                if(options.type==null) {
+                    console.log(options)
+                    iframe.editRoleDetail(JSON.stringify(options.nowData));//向此iframe层方法 传递参数
+                }
             },
             yes: function (index, layero) {
 
@@ -82,32 +99,54 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
                 //监听提交
                 iframe.layui.form.on('submit(' + submitID + ')', function (data) {
                     var field = data.field; //获取提交的字段
-                    console.log(field)
+                    if(options.type!=null){
+                        $.ajax({
+                            url: '/roles/insert-role',
+                            type: 'post',
+                            data: {
+                                'roleName': field.roleName,
+                                'description': field.description,
+                                'isDisabled': field.isDisabled,
+                                'roleCode': field.roleCode,
+                                'level': options.nowData.roleLevel,
+                                'parentId': options.type == 'same' ? options.nowData.parentId : options.nowData.id,
+                                'addType': options.type
+                            },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 22003) {
+                                    //el.reload();
+                                    el.append(options.type == 'same' ? options.nowData.parentId : options.nowData.id,data.resObj);
+                                    //el.expandNode(options.type == 'same' ? options.nowData.parentId : options.nowData.id)
+                                    roleTableIns.reload();
 
-                    $.ajax({
-                        url:'/roles/insert-role',
-                        type :'post',
-                        data : {
-                            'roleName':field.roleName,
-                            'description':field.description,
-                            'isDisabled':field.isDisabled,
-                            'roleCode':field.roleCode,
-                            'level':options.nowData.roleLevel,
-                            'parentId':options.type=='same'?options.nowData.parentId:options.nowData.id,
-                            'addType':options.type
-                        },
-                        success : function(data){
-                            console.log(data)
-                            if(data.code==22003){
-                                el.reload();
-                                roleTableIns.reload();
+                                }
+                                layer.msg(data.msg);
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(status);
                             }
+                        });
+                    }else{
+                        $.ajax({
+                            url: '/roles/update-role',
+                            type: 'post',
+                            data: field,
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 22004) {
+                                    el.updateKeySelf(field.id,field);
+                                    roleTableIns.reload();
+                                }
+                                layer.msg(data.msg);
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(status);
+                            }
+                        });
+                    }
 
-                        },
-                        error : function(xhr, status, error) {
-                            console.log(status);
-                        }
-                    });
+
                     layer.close(index);
                 });
                 submit.trigger('click');
@@ -123,34 +162,25 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
             }
 
         });
-        $('.layui-btn').on('click', function(){
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
-        });
     }
-    eleTree.on("nodeAddSameLevel(roles-tree)",function(d) {
 
-        editAndAdd({title:'新增同级角色',nowData: d.data,type:'same'});
+    eleTree.on("nodeAddSameLevel(roles-tree)", function (d) {
+
+        editAndAdd({title: '新增同级角色', nowData: d.data, type: 'same',content:'/roles/create-role'});
     });
-    eleTree.on("nodeAddChildrenLevel(roles-tree)",function(d) {
-        editAndAdd({title:'新增子角色',nowData: d.data,type:'children'});
+    eleTree.on("nodeAddChildrenLevel(roles-tree)", function (d) {
+        editAndAdd({title: '新增子角色', nowData: d.data, type: 'children',content:'/roles/create-role'});
     });
-    eleTree.on("nodeEditRole(roles-tree)",function(d) {
-        console.group("自定义右键菜单回调nodeEditRole:")
-        console.log(d.data);    // 点击节点对于的数据
-        console.log(d.node);    // 点击的dom节点
-        console.log(this);      // 与d.node相同
-        console.groupEnd();
+    eleTree.on("nodeEditRole(roles-tree)", function (d) {
+        editAndAdd({title: '编辑角色', nowData: d.data, type: null,content:'/roles/edit-role'});
     });
-    eleTree.on("nodeDelRole(roles-tree)",function(d) {
+    eleTree.on("nodeDelRole(roles-tree)", function (d) {
         console.group("自定义右键菜单回调nodedelRole:")
         console.log(d.data);    // 点击节点对于的数据
         console.log(d.node);    // 点击的dom节点
         console.log(this);      // 与d.node相同
         console.groupEnd();
     })
-
-
 
 
     //表格
@@ -180,8 +210,17 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
             , {field: 'createTime', title: '创建时间', align: 'center'}
             , {field: 'description', title: '描述', align: 'center'}
             , {title: '操作', fixed: 'right', width: 80, align: 'center', toolbar: '#roleBar'}
-        ]], done: function (res, curr, count) {
+        ]],
+        drag: false
+        , overflow: {
+            type: 'title'
+            , hoverTime: 500 // 悬停时间，单位ms, 悬停 hoverTime 后才会显示，默认为 0
+            , color: 'black' // 字体颜色
+            , bgColor: 'white' // 背景色
+        },
+        done: function (res, curr, count) {
             this.where = {};
+            soulTable.render(this);
         }
     });
     //头工具栏事件
@@ -199,7 +238,9 @@ layui.use(['tree', 'util', 'table', 'eleTree'], function () {
                         roleTableIns.reload({
                                 where: {'idOrName': idOrName}
                             }
+
                         );
+                        el.search(idOrName)
                     } else {
                         //layer.msg('查询所有用户！');
                         roleTableIns.reload();

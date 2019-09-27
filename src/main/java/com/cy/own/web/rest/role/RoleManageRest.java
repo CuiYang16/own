@@ -1,6 +1,7 @@
 package com.cy.own.web.rest.role;
 
 import com.cy.own.dto.ResponseDto;
+import com.cy.own.entity.role.Role;
 import com.cy.own.entity.role.vo.RoleAddVo;
 import com.cy.own.service.role.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,4 +31,9 @@ public class RoleManageRest {
     public ResponseDto createRole(RoleAddVo roleAddVo){
         return roleService.insertRole(roleAddVo);
     }
+    @RequestMapping(value = "/update-role", method = RequestMethod.POST)
+    public ResponseDto updateRole(Role role){
+        return roleService.updateRole(role);
+    }
+
 }

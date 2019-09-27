@@ -1,6 +1,7 @@
 package com.cy.own.service.role;
 
 import com.cy.own.dto.ResponseDto;
+import com.cy.own.entity.role.Role;
 import com.cy.own.entity.role.vo.RoleAddVo;
 
 public interface RoleService {
@@ -10,5 +11,7 @@ public interface RoleService {
     ResponseDto getRoles();
 
     ResponseDto insertRole(RoleAddVo roleAddVo);
+
+    ResponseDto updateRole(Role role);
 }
 

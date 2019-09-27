@@ -2,7 +2,7 @@
  * @Name: 基于layui的tree重写
  * @Author: 李祥
  * @License：MIT
- * 最近修改时间: 2019/05/20
+ * 最近修改时间: 2019/09/24
  */
 
 layui.define(["jquery","laytpl"], function (exports) {
@@ -75,13 +75,23 @@ layui.define(["jquery","laytpl"], function (exports) {
                 return _self.unCheckArrNodes.call(_self,data);
             },
             expandAll: function() {
-                options.elem.children(".eleTree-node").children(".eleTree-node-group").empty();
-                _self.expandAll.call(_self,options.data,[],1,true);
-                _self.unCheckNodes(true);
-                _self.defaultChecked();
-                _self.checkboxInit();
+                if(options.data.length===0) return;
+                return _self.expandAll.call(_self);
+            },
+            expandNode: function(key) {
+                if(options.data.length===0) return;
+                return _self.expandNode.call(_self,key);
+            },
+            unExpandNode: function(key) {
+                if(options.data.length===0) return;
+                return _self.unExpandNode.call(_self,key);
+            },
+            toggleExpandNode: function(key) {
+                if(options.data.length===0) return;
+                return _self.toggleExpandNode.call(_self,key);
             },
             unExpandAll: function() {
+                if(options.data.length===0) return;
                 return _self.unExpandAll.call(_self);
             },
             reload: function(options) {
@@ -89,6 +99,9 @@ layui.define(["jquery","laytpl"], function (exports) {
             },
             search: function(value) {
                 return _self.search.call(_self,value);
+            },
+            getAllNodeData: function() {
+                return _self.getAllNodeData.call(_self);
             }
         }
     }
@@ -97,7 +110,20 @@ layui.define(["jquery","laytpl"], function (exports) {
     var TPL_ELEM=function(options,floor,parentStatus) {
         return [
             '{{# for(var i=0;i<d.length;i++){ }}',
-                '<div class="eleTree-node {{# if(d[i].visible===false){ }}eleTree-search-hide{{# } }}" data-'+options.request.key+'="{{d[i]["'+options.request.key+'"]}}" eletree-floor="'+floor+'" style="display: none;">',
+                '<div class="eleTree-node {{# if(d[i].visible===false){ }}eleTree-search-hide{{# } }}" data-padding="'+options.indent*floor+'" data-'+options.customKey+'="{{d[i]["'+options.request.key+'"]}}" eletree-floor="'+floor+'">',
+                    function() {
+                        // 是否显示连线
+                        if(!options.showLine) return '';
+                        if(floor!==0){
+                            var s='<i class="eleTree-node-verticalline" style="left: '+(9+options.indent*(floor-1))+'px;"></i>'+
+                            '<i class="eleTree-node-horizontalline" style="width: '+(options.indent-4)+'px;left: '+(9+options.indent*(floor-1))+'px;"></i>';
+                            return s;
+                        }else{
+                            var s='<i class="eleTree-node-verticalline" style="left: '+(9+options.indent*(floor-1))+'px;display: none;"></i>'+
+                            '<i class="eleTree-node-horizontalline" style="width: '+(options.indent-4)+'px;left: '+(9+options.indent*(floor-1))+'px;display: none;"></i>';
+                            return s;
+                        }
+                    }(),
                     '<div class="eleTree-node-content" style="padding-left: '+(options.indent*floor)+'px;">',
                         '<span class="eleTree-node-content-icon">',
                             '<i class="layui-icon layui-icon-triangle-r ',
@@ -122,7 +148,9 @@ layui.define(["jquery","laytpl"], function (exports) {
                         function() {
                             if(options.showCheckbox){
                                 var status="";
-                                if(parentStatus==="1"){
+                                if(options.checkStrictly){
+                                    status='"0"';
+                                }else if(parentStatus==="1"){
                                     status='"1" checked';
                                 }else if(parentStatus==="2"){
                                     status='"2"';
@@ -146,7 +174,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                         }(),
                         '<span class="eleTree-node-content-label">{{d[i]["'+options.request.name+'"]}}</span>',
                     '</div>',
-                    '<div class="eleTree-node-group">',
+                    '<div class="eleTree-node-group" style="display: none;">',
                     '</div>',
                 '</div>',
             '{{# } }}'
@@ -161,8 +189,10 @@ layui.define(["jquery","laytpl"], function (exports) {
         options.response=$.extend({}, this.config.response, options.response);
         options.request=$.extend({}, this.config.request, options.request);
         this.config = $.extend({}, this.config, options);
+        this.config.customKey=this.customKeyInit();
         this.prevClickEle=null;
         this.nameIndex=1;
+        this.isRenderAllDom=false;
         this.render();
     };
 
@@ -189,6 +219,7 @@ layui.define(["jquery","laytpl"], function (exports) {
             draggable: false,           // 是否开启拖拽节点功能
             contextmenuList: [],        // 启用右键菜单，支持的操作有："copy","add","edit","remove"
             searchNodeMethod: null,     // 对树节点进行筛选时执行的方法，返回 true 表示这个节点可以显示，返回 false 则表示这个节点会被隐藏
+            showLine: false,            // 是否显示连线，默认false
 
             method: "get",
             url: "",
@@ -208,7 +239,8 @@ layui.define(["jquery","laytpl"], function (exports) {
                 disabled: "disabled",
                 checked: "checked",
                 isLeaf: "isLeaf"
-            }
+            },
+            customKey: "id",            // 自定义key转义，即appKey=>app-id
         },
         render: function() {
             if(this.config.indent>30){
@@ -236,13 +268,13 @@ layui.define(["jquery","laytpl"], function (exports) {
             $(this.config.elem).off();  // 取消事件绑定，防止多次绑定事件
             // 渲染第一层
             laytpl(TPL_ELEM(options,0)).render(options.data, function(string){
-                options.elem.html(string).children().show();
+                options.elem.html(string);
             }); 
             // 懒加载 > 展开所有 > 初始展开项 > 初始渲染所有子节点 > 初始选中项 > 每次点击只渲染当前层（默认）
             // 判断所有dom是否全部加载
             if(!options.lazy){
                 if(!options.renderAfterExpand || options.defaultExpandAll || options.defaultExpandedKeys.length>0 || options.defaultCheckedKeys.length>0){
-                    this.expandAll(options.data,[],1);
+                    this.initialExpandAll(options.data,[],1);
                 }
             }
 
@@ -302,6 +334,16 @@ layui.define(["jquery","laytpl"], function (exports) {
             // },this);
             return eleTree.render(this.config)
         },
+        // 自定义data属性修改，即 appId=>app-id，解决key包含大写的问题
+        customKeyInit: function() {
+            var options=this.config;
+            var key="";
+            for(var i=0;i<options.request.key.length;i++){
+                var s=options.request.key.charAt(i);
+                key+=(/[A-Z]/.test(s)) ? ("-"+s.toLocaleLowerCase()) : s;
+            }
+            return key;
+        },
         // 下拉
         eleTreeEvent: function() {
             var _self=this;
@@ -315,16 +357,9 @@ layui.define(["jquery","laytpl"], function (exports) {
                 var sibNode=eleTreeNodeContent.siblings(".eleTree-node-group");
                 var el=eleTreeNodeContent.children(".eleTree-node-content-icon").children(".layui-icon");
 
-                // 添加active背景
-                if(_self.prevClickEle) _self.prevClickEle.removeClass("eleTree-node-content-active");
-                if(options.highlightCurrent) eleTreeNodeContent.addClass("eleTree-node-content-active");
-                _self.prevClickEle=eleTreeNodeContent;
-
-                
-
                 if(el.hasClass("icon-rotate")){
                     // 合并
-                    sibNode.children(".eleTree-node:not(.eleTree-search-hide)").hide("fast");
+                    sibNode.hide("fast");
                     el.removeClass("icon-rotate");
                     return;
                 }
@@ -360,34 +395,39 @@ layui.define(["jquery","laytpl"], function (exports) {
                             if(d[options.request.children] && d[options.request.children].length>0){
                                 // 只渲染获取到的数据
                                 laytpl(TPL_ELEM(options,floor,eletreeStatus)).render(getData, function(string){
-                                    sibNode.append(string).children().show("fast");
+                                    sibNode.append(string).show("fast");
                                 });
                             }else{
                                 el.css("color","transparent").addClass("leaf-icon");
                             }
                             el.removeClass("lazy-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop").addClass("layui-icon-triangle-r icon-rotate");
 
-                            // 懒加载子元素选择祖父（待写）
+                            // 懒加载子元素选择祖父
                             selectParentsFn();
                             _self.checkboxRender();
                         })
                     }else{
                         var eletreeStatus=eleTreeNodeContent.children("input.eleTree-hideen").attr("eletree-status");
-                        d[options.request.children] && d[options.request.children].length>0 && laytpl(TPL_ELEM(options,floor,eletreeStatus)).render(d[options.request.children], function(string){
-                            sibNode.append(string);
-                        });
-                        // 选择祖父
-                        selectParentsFn();
-                        _self.checkboxRender();
+                        if(d[options.request.children] && d[options.request.children].length>0){
+                            laytpl(TPL_ELEM(options,floor,eletreeStatus)).render(d[options.request.children], function(string){
+                                sibNode.append(string).show("fast");
+                                el.addClass("icon-rotate");
+                            });
+                            // 选择祖父
+                            selectParentsFn();
+                            _self.checkboxRender();
+                        }
                     }
+                }else{
+                    // 有子节点则展开子节点
+                    sibNode.show("fast");
+                    el.addClass("icon-rotate");
                 }
-                // 显示隐藏没有搜索类的
-                sibNode.children(".eleTree-node:not(.eleTree-search-hide)").show("fast");
-                el.addClass("icon-rotate");
+                
                 // 手风琴效果
                 if(options.accordion){
                     var node=eleTreeNodeContent.parent(".eleTree-node").siblings(".eleTree-node");
-                    node.children(".eleTree-node-group").children(".eleTree-node:not(.eleTree-search-hide)").hide("fast");
+                    node.children(".eleTree-node-group").hide("fast");
                     node.children(".eleTree-node-content").children(".eleTree-node-content-icon").children(".layui-icon").removeClass("icon-rotate");
                 }
             })
@@ -419,11 +459,10 @@ layui.define(["jquery","laytpl"], function (exports) {
 
                 if(inp.checked){
                     // 反选自身
-                    $(inp).prop("checked",false).attr("eleTree-status","0");
+                    $(inp).prop("checked",false).attr("eleTree-status","0").removeAttr("data-checked");
                     // 点击祖父层选中子孙层
                     if(!options.checkStrictly){
-                        childNode.prop("checked",false);
-                        childNode.attr("eleTree-status","0");
+                        childNode.prop("checked",false).attr("eleTree-status","0").removeAttr("data-checked");
                     }
                     
                 }else{
@@ -522,9 +561,10 @@ layui.define(["jquery","laytpl"], function (exports) {
             }
         },
         // 初始展开所有
-        expandAll: function(data,arr,floor,isMethodsExpandAll) {
+        initialExpandAll: function(data,arr,floor,isMethodsExpandAll) {
             var options=this.config;
             var _self=this;
+            this.isRenderAllDom=true;
             data.forEach(function(val,index) {
                 arr.push(index);
                 if(val[options.request.children] && val[options.request.children].length>0){
@@ -536,16 +576,14 @@ layui.define(["jquery","laytpl"], function (exports) {
                         el.append(string);
                         // 判断是否展开所有
                         if(options.defaultExpandAll || isMethodsExpandAll){
-                            el.siblings(".eleTree-node-content").children(".eleTree-node-content-icon").children(".layui-icon").addClass("icon-rotate");
-                            el.children().show();
+                            el.show().siblings(".eleTree-node-content").children(".eleTree-node-content-icon").children(".layui-icon").addClass("icon-rotate");
                         }else if(options.defaultExpandedKeys.length>0) {
                             // 继续展开祖父层
                             var f=function(eleP) {
                                 if(options.autoExpandParent){
                                     eleP.parents(".eleTree-node").each(function(i,item) {
                                         if($(item).data(options.request.key)){
-                                            $(item).children(".eleTree-node-group").siblings(".eleTree-node-content").children(".eleTree-node-content-icon").children(".layui-icon").addClass("icon-rotate");
-                                            $(item).children(".eleTree-node-group").children().show();
+                                            $(item).children(".eleTree-node-group").show().siblings(".eleTree-node-content").children(".eleTree-node-content-icon").children(".layui-icon").addClass("icon-rotate");
                                         }
                                     })
                                 }
@@ -554,10 +592,9 @@ layui.define(["jquery","laytpl"], function (exports) {
                             var id=el.parent(".eleTree-node").data(options.request.key);
                             if($.inArray(id,options.defaultExpandedKeys)!==-1){
                                 // 直接展开子节点
-                                el.siblings(".eleTree-node-content").children(".eleTree-node-content-icon").children(".layui-icon").addClass("icon-rotate");
-                                el.children().show();
+                                el.show().siblings(".eleTree-node-content").children(".eleTree-node-content-icon").children(".layui-icon").addClass("icon-rotate");
                                 // 展开子项是否继续展开祖父项
-                                f(el.parent(".eleTree-node[data-"+options.request.key+"]"));
+                                f(el.parent(".eleTree-node[data-"+options.customKey+"]"));
                             }else{
                                 // 如当前节点的子节点有展开项，则展开当前子节点的祖父层
                                 el.children(".eleTree-node").each(function(index, item) {
@@ -571,14 +608,12 @@ layui.define(["jquery","laytpl"], function (exports) {
                         }
                     });
                     floor++;
-                    _self.expandAll(val[options.request.children],arr,floor,isMethodsExpandAll);
+                    _self.initialExpandAll(val[options.request.children],arr,floor,isMethodsExpandAll);
                     floor--;
                 }
                 // 重置数组索引
                 arr.pop();
             })
-
-            
         },
         // 选中单个节点
         checkedOneNode: function(nodeContent){
@@ -606,7 +641,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 return false;
             }
             arr.forEach(function(val,index) {
-                var nodeContent=options.elem.find("[data-"+options.request.key+"='"+val+"']").children(".eleTree-node-content");
+                var nodeContent=options.elem.find("[data-"+options.customKey+"='"+val+"']").children(".eleTree-node-content");
                 nodeContent.length>0 && _self.checkedOneNode(nodeContent);
             })
             this.checkboxInit();
@@ -694,7 +729,7 @@ layui.define(["jquery","laytpl"], function (exports) {
         },
         updateKeyChildren: function(key,data) {
             var options=this.config;
-            var node=options.elem.find("[data-"+options.request.key+"='"+key+"']");
+            var node=options.elem.find("[data-"+options.customKey+"='"+key+"']");
             var floor=Number(node.attr("eletree-floor"))+1;
             var _self=this;
             
@@ -704,7 +739,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 // dom更新
                 node.length!==0 && laytpl(TPL_ELEM(options,floor)).render(data, function(string){
                     $(node).children(".eleTree-node-group").empty().append(string);
-                    options.defaultExpandAll && $(node).children(".eleTree-node-group").children().show();
+                    options.defaultExpandAll && $(node).children(".eleTree-node-group").show();
                 }); 
                 _self.unCheckNodes(true);
                 _self.defaultChecked();
@@ -712,7 +747,7 @@ layui.define(["jquery","laytpl"], function (exports) {
         },
         updateKeySelf: function(key,data) {
             var options=this.config;
-            var node=options.elem.find("[data-"+options.request.key+"='"+key+"']").children(".eleTree-node-content");
+            var node=options.elem.find("[data-"+options.customKey+"='"+key+"']").children(".eleTree-node-content");
             var floor=Number(node.attr("eletree-floor"))+1;
             data[options.request.name] && node.children(".eleTree-node-content-label").text(data[options.request.name]);
             data[options.request.disabled] && node.children(".eleTree-hideen").addClass("eleTree-disabled")
@@ -727,7 +762,7 @@ layui.define(["jquery","laytpl"], function (exports) {
         },
         remove: function(key) {
             var options=this.config;
-            var node=options.elem.find("[data-"+options.request.key+"='"+key+"']");
+            var node=options.elem.find("[data-"+options.customKey+"='"+key+"']");
             var pElem=node.parent(".eleTree-node-group");
             // 数据删除
             this.keySearchToOpera(key,function(data,obj) {
@@ -735,7 +770,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 obj.i--;
                 obj.len--;
 
-                node.length!==0 && options.elem.find("[data-"+options.request.key+"='"+key+"']").remove();
+                node.length!==0 && options.elem.find("[data-"+options.customKey+"='"+key+"']").remove();
                 if(pElem.children(".eleTree-node").length===0){
                     pElem.siblings(".eleTree-node-content").children(".eleTree-node-content-icon").children(".layui-icon").css("color", "transparent");
                 }
@@ -761,7 +796,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 return;
             }
             // 传key则添加到子节点
-            var node=options.elem.find("[data-"+options.request.key+"='"+key+"']");
+            var node=options.elem.find("[data-"+options.customKey+"='"+key+"']");
             var floor=Number(node.attr("eletree-floor"))+1;
             // 数据更新
             this.keySearchToOpera(key,function(d,obj) {
@@ -793,7 +828,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                     var eletreeStatus=node.children(".eleTree-node-content").children("input.eleTree-hideen").attr("eletree-status");
                     eletreeStatus=eletreeStatus==="2" ? "0" : eletreeStatus;
                     node.length!==0 && laytpl(TPL_ELEM(options,floor,eletreeStatus)).render([arr[len-1]], function(string){
-                        node.children(".eleTree-node-group").append(string).children().show();
+                        node.children(".eleTree-node-group").append(string).show();
                     }); 
                 }
                 
@@ -802,7 +837,7 @@ layui.define(["jquery","laytpl"], function (exports) {
         },
         insertBefore: function(key,data) {
             var options=this.config;
-            var node=options.elem.find("[data-"+options.request.key+"='"+key+"']");
+            var node=options.elem.find("[data-"+options.customKey+"='"+key+"']");
             var floor=Number(node.attr("eletree-floor"));
             // 数据更新
             this.keySearchToOpera(key,function(d,obj) {
@@ -813,14 +848,14 @@ layui.define(["jquery","laytpl"], function (exports) {
                 .children(".eleTree-node-content").children("input.eleTree-hideen").attr("eletree-status");
                 eletreeStatus=eletreeStatus==="2" ? "0" : eletreeStatus;
                 node.length!==0 && laytpl(TPL_ELEM(options,floor,eletreeStatus)).render([data], function(string){
-                    node.before(string).prev(".eleTree-node").show();
+                    node.before(string).prev(".eleTree-node");
                 }); 
             });
             this.checkboxRender();
         },
         insertAfter: function(key,data) {
             var options=this.config;
-            var node=options.elem.find("[data-"+options.request.key+"='"+key+"']");
+            var node=options.elem.find("[data-"+options.customKey+"='"+key+"']");
             var floor=Number(node.attr("eletree-floor"));
             // 数据更新
             this.keySearchToOpera(key,function(d,obj) {
@@ -831,13 +866,13 @@ layui.define(["jquery","laytpl"], function (exports) {
                 .children(".eleTree-node-content").children("input.eleTree-hideen").attr("eletree-status");
                 eletreeStatus=eletreeStatus==="2" ? "0" : eletreeStatus;
                 node.length!==0 && laytpl(TPL_ELEM(options,floor,eletreeStatus)).render([data], function(string){
-                    $(node).after(string).next(".eleTree-node").show();
+                    $(node).after(string).next(".eleTree-node");
                 }); 
             });
             this.checkboxRender();
             // if(!options.lazy){
             //     if(!options.renderAfterExpand || options.defaultExpandAll || options.defaultExpandedKeys.length>0){
-            //         this.expandAll(options.data,[],1);
+            //         this.initialExpandAll(options.data,[],1);
             //     }
             // }
         },
@@ -927,7 +962,86 @@ layui.define(["jquery","laytpl"], function (exports) {
             var options=this.config;
             options.elem.find(".layui-icon.icon-rotate").removeClass("icon-rotate")
                 .parent(".eleTree-node-content-icon").parent(".eleTree-node-content")
-                .siblings(".eleTree-node-group").children(".eleTree-node").hide();
+                .siblings(".eleTree-node-group").hide();
+        },
+        // 方法展开所有节点
+        expandAll: function() {
+            var options=this.config;
+            if(this.isRenderAllDom){
+                return void options.elem.find(".eleTree-node-content-icon>.layui-icon").addClass("icon-rotate")
+                    .parent(".eleTree-node-content-icon").parent(".eleTree-node-content")
+                    .siblings(".eleTree-node-group").show();
+            }
+            options.elem.children(".eleTree-node").children(".eleTree-node-group").empty();
+            this.initialExpandAll(options.data,[],1,true);
+            this.unCheckNodes(true);
+            this.defaultChecked();
+            this.checkboxInit();
+        },
+        // 展开某节点的所有子节点
+        expandNode: function(key) {
+            var options=this.config;
+            var parentsEl=options.elem.find("[data-"+options.customKey+"='"+key+"']");
+            var isExpand=parentsEl.children(".eleTree-node-content").find(".eleTree-node-content-icon>.layui-icon.layui-icon-triangle-r").hasClass("icon-rotate");
+            var parentGroup=parentsEl.find(".eleTree-node-group");
+            // 判断是否已经展开
+            if(isExpand) return false;
+            // 判断子节点是否已经渲染(目前只判断所有子节点是否已经全部渲染，而不是当前子节点是否全部渲染)
+            if(this.isRenderAllDom){
+                parentGroup.show("fast");
+                parentsEl.find(".layui-icon.layui-icon-triangle-r").addClass("icon-rotate");
+                return false;
+            }
+            if(options.lazy) return hint.error("展开所有子节点方法暂不支持懒加载");
+            
+            var data=this.reInitData(parentsEl);
+            var d=data.currentData;
+            var floor=Number(parentsEl.attr("eletree-floor"))+1;
+            var fn=function(data,arr,floor) {
+                data.forEach(function(val,index) {
+                    arr.push(index);
+                    if(val[options.request.children] && val[options.request.children].length>0){
+                        var el=parentsEl.children(".eleTree-node-group");
+                        for(var i=1;i<arr.length;i++){
+                            el=el.children(".eleTree-node").eq(arr[i]).children(".eleTree-node-group");
+                        }
+                        laytpl(TPL_ELEM(options,floor)).render(val[options.request.children], function(string){
+                            el.html(string);
+                            el.show().siblings(".eleTree-node-content").children(".eleTree-node-content-icon").children(".layui-icon").addClass("icon-rotate");
+                        });
+                        floor++;
+                        fn(val[options.request.children],arr,floor);
+                        floor--;
+                    }
+                    // 重置数组索引
+                    arr.pop();
+                })
+            }
+            fn([d],[],floor);
+            this.unCheckNodes(true);
+            this.defaultChecked();
+            this.checkboxInit();
+        },
+        // 合并某节点的所有子节点
+        unExpandNode: function(key) {
+            var options=this.config;
+            var parentsEl=options.elem.find("[data-"+options.customKey+"='"+key+"']");
+            var isExpand=parentsEl.children(".eleTree-node-content").find(".eleTree-node-content-icon>.layui-icon.layui-icon-triangle-r").hasClass("icon-rotate");
+            // 判断是否已经合并
+            if(!isExpand) return false;
+            parentsEl.find(".eleTree-node-group").hide("fast");
+            parentsEl.find(".layui-icon.layui-icon-triangle-r").removeClass("icon-rotate");
+        },
+        // 切换某节点的所有子节点的展开合并状态
+        toggleExpandNode: function(key) {
+            var options=this.config;
+            var parentsEl=options.elem.find("[data-"+options.customKey+"='"+key+"']");
+            var isExpand=parentsEl.children(".eleTree-node-content").find(".eleTree-node-content-icon>.layui-icon.layui-icon-triangle-r").hasClass("icon-rotate");
+            if(isExpand){
+                this.unExpandNode(key);
+            }else{
+                this.expandNode(key);
+            }
         },
         // 节点事件
         nodeEvent: function() {
@@ -936,6 +1050,12 @@ layui.define(["jquery","laytpl"], function (exports) {
             // 节点被点击的回调事件
             options.elem.on("click",".eleTree-node-content",function(e) {
                 var eleNode=$(this).parent(".eleTree-node");
+                var eleTreeNodeContent=eleNode.children(".eleTree-node-content");
+                // 添加active背景
+                if(_self.prevClickEle) _self.prevClickEle.removeClass("eleTree-node-content-active");
+                if(options.highlightCurrent) eleTreeNodeContent.addClass("eleTree-node-content-active");
+                _self.prevClickEle=eleTreeNodeContent;
+
                 $("#tree-menu").hide().remove();
                 layui.event.call(eleNode, MOD_NAME, 'nodeClick('+ _self.filter +')', {
                     node: eleNode,
@@ -1072,12 +1192,22 @@ layui.define(["jquery","laytpl"], function (exports) {
                     // 加floor和padding
                     temNode.attr("eletree-floor",String(floor));
                     temNode.children(".eleTree-node-content").css("padding-left",floor*options.indent+"px");
+                    // 计算线条的left
+                    if(options.showLine){
+                        // 判断目标是否是最外层，是的话隐藏线条
+                        if(floor===0){
+                            temNode.children(".eleTree-node-verticalline,.eleTree-node-horizontalline").hide();
+                        }else{
+                            temNode.children(".eleTree-node-verticalline,.eleTree-node-horizontalline").css("left",options.indent*(floor-1)+9+"px").show();
+                        }
+                    }
                     // 通过floor差值计算子元素的floor
                     var countFloor=eleFloor-floor;
                     temNode.find(".eleTree-node").each(function(index,item) {
                         var f=Number($(item).attr("eletree-floor"))-countFloor;
                         $(item).attr("eletree-floor",String(f));
                         $(item).children(".eleTree-node-content").css("padding-left",f*options.indent+"px");
+                        options.showLine && $(item).children(".eleTree-node-verticalline,.eleTree-node-horizontalline").css("left",options.indent*(f-1)+9+"px").show();
                     })
                     // 原dom去三角
                     var leaf=groupNode.children(".eleTree-node").length===0;
@@ -1085,10 +1215,13 @@ layui.define(["jquery","laytpl"], function (exports) {
                         .children(".eleTree-node-content-icon").children(".layui-icon")
                         .removeClass("icon-rotate").css("color","transparent");
                     // 当前的增加三角
-                    var cLeaf=target.children(".eleTree-node-group").children(".eleTree-node").length===0;
-                        !cLeaf && target.children(".eleTree-node-content")
+                    var cLeaf=target.children(".eleTree-node-group").children(".eleTree-node").length===1;
+                        cLeaf && target.children(".eleTree-node-content")
                         .children(".eleTree-node-content-icon").children(".layui-icon")
                         .addClass("icon-rotate").removeAttr("style");
+                    // 判断当前是否需要显示
+                    var isShowNode=target.children(".eleTree-node-content").find(".layui-icon").hasClass("icon-rotate");
+                        (isTargetOuterMost || isShowNode) && target.children(".eleTree-node-group").show();
 
                     _self.unCheckNodes(true);
                     _self.defaultChecked();
@@ -1112,7 +1245,8 @@ layui.define(["jquery","laytpl"], function (exports) {
             options.contextmenuList.forEach(function(val) {
                 if($.inArray(val,internalMenu)===-1){
                     customizeMenu.push(val);
-                    customizeStr+='<li class="right-menu '+(val.eventName || val)+'"><a href="javascript:;"><i class="layui-icon">&#xe60c;</i> '+(val.text || val)+'</a></li>';
+                    //修改
+                    customizeStr+='<li class="right-menu '+(val.eventName || val)+'"><a href="javascript:;"><i class="layui-icon">&#xe60c;</i>'+(val.text || val)+'</a></li>';
                 }
             })
             var menuStr=['<ul id="tree-menu">'
@@ -1141,7 +1275,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 $("#tree-menu").find("li.append,li.insertAfter,li.insertBefore").hide();
                 $("#tree-menu").find(":not(li.append,li.insertAfter,li.insertBefore)").show();
                 $("#tree-menu").css({
-                    left: e.clientX+$(document).scrollLeft() -40,
+                    left: e.clientX+$(document).scrollLeft()-40,
                     top: e.clientY+$(document).scrollTop()
                 }).show();
                 // 复制
@@ -1193,7 +1327,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                                 var inp="<input type='text' value='"+obj[options.request.name]+"' class='eleTree-node-content-input' />";
                                 label.after(inp);
 
-                                label.siblings(".eleTree-node-content-input").focus().off().on("blur",function() {
+                                label.siblings(".eleTree-node-content-input").focus().select().off().on("blur",function() {
                                     var v=$(this).val();
                                     obj[options.request.name]=v;
                                     var inpThis=this;
@@ -1217,7 +1351,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                                             d[options.request.key]=newObj[options.request.key];
                                             // 修改dom
                                             $(inpThis).siblings(".eleTree-node-content-label").text(newObj[options.request.name]).show();
-                                            $(itemNode).attr("data-"+options.request.key,newObj[options.request.key]);  // 改变页面上面的显示的key，之后可以获取dom
+                                            $(itemNode).attr("data-"+options.customKey,newObj[options.request.key]);  // 改变页面上面的显示的key，之后可以获取dom
                                             $(itemNode).data(options.request.key,newObj[options.request.key]);          // 改变data数据，之后可以通过data获取key
                                             $(inpThis).remove();
             
@@ -1370,7 +1504,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                         val.visible = childSomeShow;
                     }
                     // 通过节点的属性，显示隐藏各个节点，并添加删除搜索类
-                    var el=options.elem.find("[data-"+options.request.key+"='"+val[options.request.key]+"']");
+                    var el=options.elem.find("[data-"+options.customKey+"='"+val[options.request.key]+"']");
                     if(val.visible){
                         el.removeClass("eleTree-search-hide");
                         // 判断父节点是否展开，如果父节点没有展开，则子节点也不要显示
@@ -1392,11 +1526,11 @@ layui.define(["jquery","laytpl"], function (exports) {
             }
             traverse(data);
             // 删除最外层属性
-            var arr=[];
-            data.forEach(function(val) {
-                arr.push(val.visible);
+            var arr=data.map(function (val) {
+                var v=val.visible;
                 // delete val.visible;
-            })
+                return v;
+            });
             var isNotext=options.elem.children(".eleTree-noText");
             // 如果第一层的所有的都隐藏，则显示文本
             if(arr.every(function(v) {
@@ -1410,6 +1544,10 @@ layui.define(["jquery","laytpl"], function (exports) {
             }else{
                 isNotext.remove();
             }
+        },
+        getAllNodeData: function() {
+            var options=this.config;
+            return options.data;
         }
     }
     
