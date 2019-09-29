@@ -31,9 +31,14 @@ public class RoleManageRest {
     public ResponseDto createRole(RoleAddVo roleAddVo){
         return roleService.insertRole(roleAddVo);
     }
+
     @RequestMapping(value = "/update-role", method = RequestMethod.POST)
     public ResponseDto updateRole(Role role){
         return roleService.updateRole(role);
     }
 
+    @RequestMapping(value = "/del-role", method = RequestMethod.POST)
+    public ResponseDto deleteRole(String id){
+        return roleService.deleteRole(id);
+    }
 }

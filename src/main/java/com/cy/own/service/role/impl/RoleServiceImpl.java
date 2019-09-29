@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -79,7 +80,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public ResponseDto getRoles() {
         try {
-            List<RoleTreeVo> roles = roleMapper.getRoles();
+            List<RoleTreeVo> roles = roleMapper.getRoles(null);
             ResponseDto dto = ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "select_tree_role", "22001")))
                     .msg(env.getProperty(RES_MSG + "select_tree_role", "查询成功"))
                     .data(roles).build();
@@ -99,11 +100,43 @@ public class RoleServiceImpl implements RoleService {
         try {
             logger.info(role.toString());
             int update = roleMapper.updateByPrimaryKeySelective(role);
-            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "update_role", "22004"))).msg(env.getProperty(RES_MSG+"update_role", "编辑角色信息成功！")).build();
-        }catch (Exception e){
+            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "update_role", "22004"))).msg(env.getProperty(RES_MSG + "update_role", "编辑角色信息成功！")).build();
+        } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "update_role_fail", "52004"))).msg(env.getProperty(RES_MSG+"update_role_fail", "编辑角色信息失败，请刷新重试！")).build();
+            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "update_role_fail", "52004"))).msg(env.getProperty(RES_MSG + "update_role_fail", "编辑角色信息失败，请刷新重试！")).build();
         }
 
+    }
+
+    /**
+     * 删除
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public ResponseDto deleteRole(String id) {
+        List<RoleTreeVo> roles = roleMapper.getRoles(id);
+        List<String> ids = new ArrayList<>();
+        ids.add(id);
+        this.resursionTree(roles, ids);
+        try {
+            roleMapper.delRoles(ids);
+            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "del_role", "22005"))).msg(env.getProperty(RES_MSG + "del_role", "删除成功！")).data(ids).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "del_role_fail", "52005"))).msg(env.getProperty(RES_MSG + "del_role_fail", "删除失败，请刷新重试！")).build();
+        }
+
+    }
+
+    public void resursionTree(List<RoleTreeVo> roles, List<String> result) {
+
+        for (RoleTreeVo r : roles) {
+            result.add(r.getId());
+            if (r.getChildren().size() > 0) {
+                resursionTree(r.getChildren(), result);
+            }
+        }
     }
 }

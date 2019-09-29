@@ -50,19 +50,21 @@ layui.use(['tree', 'util', 'table', 'eleTree', 'soulTable'], function () {
         ],
         searchNodeMethod: function(value,data) {
             if (!value) return true;
-            return data.label.indexOf(value) !== -1;
+            return data.roleCode.indexOf(value) !== -1||data.roleName.indexOf(value) !== -1;
         }
     })
 
     $('#unExpandBtn').click(function () {
+        console.log("unExpandAll")
         el.unExpandAll();
     });
     $('#expandBtn').click(function () {
+        console.log("expandAll")
         el.expandAll();
     });
     $('#refreshBtn').click(function () {
         el.reload();
-        roleTableIns.reload();
+       roleTableIns.reload();
     });
 
 // 节点点击事件
@@ -80,12 +82,12 @@ layui.use(['tree', 'util', 'table', 'eleTree', 'soulTable'], function () {
             title: options.title,
             shadeClose: false,
             shade: 0.8,
-            area: ['45vw', '80vh'],
+            area: ['45vw', '55vh'],
             btn: ['确定', '重置'],
             content: options.content,
             success: function (layero, index) {
                 var iframe = window['layui-layer-iframe' + index];//拿到iframe元素
-                if(options.type==null) {
+                if(options.type=="edit"|| options.type =="detail") {
                     console.log(options)
                     iframe.editRoleDetail(JSON.stringify(options.nowData));//向此iframe层方法 传递参数
                 }
@@ -99,7 +101,7 @@ layui.use(['tree', 'util', 'table', 'eleTree', 'soulTable'], function () {
                 //监听提交
                 iframe.layui.form.on('submit(' + submitID + ')', function (data) {
                     var field = data.field; //获取提交的字段
-                    if(options.type!=null){
+                    if(options.type=="same"|| options.type =="children"){
                         $.ajax({
                             url: '/roles/insert-role',
                             type: 'post',
@@ -127,7 +129,7 @@ layui.use(['tree', 'util', 'table', 'eleTree', 'soulTable'], function () {
                                 console.log(status);
                             }
                         });
-                    }else{
+                    }else if (options.type == "edit"){
                         $.ajax({
                             url: '/roles/update-role',
                             type: 'post',
@@ -172,15 +174,42 @@ layui.use(['tree', 'util', 'table', 'eleTree', 'soulTable'], function () {
         editAndAdd({title: '新增子角色', nowData: d.data, type: 'children',content:'/roles/create-role'});
     });
     eleTree.on("nodeEditRole(roles-tree)", function (d) {
-        editAndAdd({title: '编辑角色', nowData: d.data, type: null,content:'/roles/edit-role'});
+        editAndAdd({title: '编辑角色', nowData: d.data, type: "edit",content:'/roles/edit-role'});
     });
     eleTree.on("nodeDelRole(roles-tree)", function (d) {
-        console.group("自定义右键菜单回调nodedelRole:")
+        console.log("自定义右键菜单回调nodedelRole:")
         console.log(d.data);    // 点击节点对于的数据
-        console.log(d.node);    // 点击的dom节点
-        console.log(this);      // 与d.node相同
-        console.groupEnd();
-    })
+
+        var index = layer.confirm('确认删除吗？对应子角色也将删除', {
+            btn: ['确认','取消'] //按钮，
+            ,title :"确认删除"
+        }, function(){
+            $.ajax({
+                url:'/roles/del-role',
+                type :'post',
+                data :{'id':d.data.id},
+                success : function(data) {
+                    if(data.code==22005){
+                        layer.msg(data.msg)
+                        el.remove(d.data.id);
+                        roleTableIns.reload();
+                    }else{
+                        layer.msg(data.msg)
+                    }
+
+                    layer.close(index);
+                },
+                error : function(xhr, status, error) {
+                    console.log(xhr, status, error)
+                    layer.close(index);
+                }
+            });
+        }, function(){
+
+        });
+
+
+    });
 
 
     //表格
@@ -240,15 +269,24 @@ layui.use(['tree', 'util', 'table', 'eleTree', 'soulTable'], function () {
                             }
 
                         );
-                        el.search(idOrName)
+                        el.search(idOrName,el.getAllNodeData())
                     } else {
                         //layer.msg('查询所有用户！');
+                        el.reload();
                         roleTableIns.reload();
                     }
                     break;
             }
         }
     );
+    table.on('tool(rolesTableFilter)', function (obj) {
+        var data = obj.data;
+        if (obj.event === 'detail') {
+            editAndAdd({title: '查看角色详情', nowData: data, type: "detail",content:'/roles/edit-role'});
+        }
+    }
+    )
+
 });
 
 

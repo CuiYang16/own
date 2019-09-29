@@ -9,8 +9,6 @@ import java.util.List;
 public interface RoleMapper {
     int deleteByPrimaryKey(String id);
 
-    int insert(Role record);
-
     int insertSelective(Role record);
 
     List<Role> selectByUserId(String userId);
@@ -19,9 +17,9 @@ public interface RoleMapper {
 
     int updateByPrimaryKeySelective(Role record);
 
-    int updateByPrimaryKey(Role record);
-
-    List<RoleTreeVo> getRoles();
+    List<RoleTreeVo> getRoles(String id);
 
     List<Role> selectAllRoles(@Param("parentId") String parentId, @Param("idOrName") String idOrName);
+
+    int delRoles(List<String> ids);
 }

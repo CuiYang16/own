@@ -23,6 +23,8 @@ code:
     insert_role_fail: 52003
     update_role: 22004
     updata_role_fail: 52004
+    del_role: 22005
+    del_role_fail: 52006
 msg:
   user:
     login_success: 登录成功
@@ -46,3 +48,5 @@ msg:
     insert_role_fail: 新增角色失败，请刷新重试！
     update_role: 编辑角色信息成功！
     updata_role_fail: 编辑角色信息失败，请刷新重试！
+    del_role: 删除成功！
+    del_role_fail: 删除失败，请刷新重试！

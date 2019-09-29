@@ -13,5 +13,7 @@ public interface RoleService {
     ResponseDto insertRole(RoleAddVo roleAddVo);
 
     ResponseDto updateRole(Role role);
+
+    ResponseDto deleteRole(String id);
 }
 

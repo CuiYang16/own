@@ -15,14 +15,14 @@
                 <div class="layui-card-body">
                     <div class="layui-btn-group tree-menu">
                         <button type="button" class="layui-btn layui-btn-xs" id="unExpandBtn">
-                            <i class="layui-icon">&#xe655;</i>
+                            <i class="layui-icon">&#xe655;</i>收起
                         </button>
                         <button type="button" class="layui-btn layui-btn-xs" id="expandBtn">
-                            <i class="layui-icon">&#xe630;</i>
+                            <i class="layui-icon">&#xe630;</i>全部展开
                         </button>
-                        <button type="button" class="layui-btn layui-btn-normal layui-btn-xs" id="refreshBtn">
-                            <i class="layui-icon">&#xe9aa;</i>
-                        </button>
+<!--                        <button type="button" class="layui-btn layui-btn-normal layui-btn-xs" id="refreshBtn">-->
+<!--                            <i class="layui-icon">&#xe9aa;</i>-->
+<!--                        </button>-->
                     </div>
                     <div class="eleTree ele1" id="roles-tree" lay-filter="roles-tree"></div>
                 </div>
@@ -37,7 +37,7 @@
                     <!--            顶部工具类-->
                     <script type="text/html" id="roleHeadToolbar">
                         <div class="layui-input-inline">
-                            <input type="text" name="title" id="idOrName" placeholder="请输入角色名或代码或ID" autocomplete="off" class="layui-input">
+                            <input type="text" name="title" id="idOrName" placeholder="请输入角色名或代码" autocomplete="off" class="layui-input">
                         </div>
                         <button class="layui-btn layui-btn-sm" lay-event="searchRole"><i class="layui-icon layui-icon-search"></i>查询</button>
                         <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>

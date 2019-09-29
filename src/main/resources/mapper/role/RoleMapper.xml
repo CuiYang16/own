@@ -39,24 +39,38 @@
 
     <!--    获取所有一级角色信息-->
     <select id="getRoles" resultMap="RoleVoMap">
-        select <include refid="Base_Column_List"/> from role where parent_id=-1
+        select
+        <include refid="Base_Column_List"/>
+        from role
+        <where>
+            <if test="_parameter!=null">
+                parent_id=#{id,jdbcType=VARCHAR}
+            </if>
+            <if test="_parameter==null">
+                parent_id=-1
+            </if>
+        </where>
 
     </select>
     <!--    子查询-->
     <select id="selectRoleChildren" resultMap="RoleVoMap" parameterType="string">
-   select <include refid="Base_Column_List"/>  from role where parent_id = #{id,jdbcType=VARCHAR}
-</select>
+        select
+        <include refid="Base_Column_List"/>
+        from role where parent_id = #{id,jdbcType=VARCHAR}
+    </select>
 
-<!--    查询所有角色信息-->
+    <!--    查询所有角色信息-->
     <select id="selectAllRoles" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/> from role
+        select
+        <include refid="Base_Column_List"/>
+        from role
         <where>
             <if test="parentId!=null">
                 parent_id = #{parentId,jdbcType=VARCHAR}
             </if>
 
             <if test="idOrName!=null">
-                and (id = #{idOrName,jdbcType=VARCHAR} or role_name=#{idOrName,jdbcType=VARCHAR} or role_code=#{idOrName,jdbcType=VARCHAR})
+                and (role_name=#{idOrName,jdbcType=VARCHAR} or role_code=#{idOrName,jdbcType=VARCHAR})
             </if>
         </where>
 
@@ -67,13 +81,16 @@
     delete from role
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-
-    <insert id="insert" parameterType="com.cy.own.entity.role.Role">
-    insert into role (id, role_name, description, 
-      create_time, parent_id)
-    values (#{id,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{parentId,jdbcType=VARCHAR})
-  </insert>
+    <delete
+            id="delRoles" parameterType="string">
+        delete from role
+        where id in
+        <foreach
+                collection="list" open="(" separator="," close=")"
+                 item="id" index="index">
+            #{id,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
 
     <insert id="insertSelective" parameterType="com.cy.own.entity.role.Role">
         insert into role
@@ -142,7 +159,7 @@
                 description = #{description,jdbcType=VARCHAR},
             </if>
             <if test="createTime != null">
-                create_time =  #{createTime,jdbcType=TIMESTAMP},
+                create_time = #{createTime,jdbcType=TIMESTAMP},
             </if>
 
             <if test="roleLevel != null and roleLevel != 0">
@@ -153,7 +170,7 @@
             </if>
 
             <if test="parentId != null">
-                parent_id =  #{parentId,jdbcType=VARCHAR},
+                parent_id = #{parentId,jdbcType=VARCHAR},
             </if>
             <if test="isDisabled != null">
                 is_disabled=#{isDisabled,jdbcType=TINYINT},
@@ -161,12 +178,5 @@
         </set>
         where id = #{id,jdbcType=VARCHAR}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.cy.own.entity.role.Role">
-    update role
-    set role_name = #{roleName,jdbcType=VARCHAR},
-      description = #{description,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      parent_id = #{parentId,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
+
 </mapper>
