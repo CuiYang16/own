@@ -1,19 +1,20 @@
 package com.cy.own.service.user;
 
-import com.cy.own.dto.ResponseDto;
+import com.cy.own.dto.result.ResultInfo;
 import com.cy.own.entity.user.Users;
+import com.cy.own.model.users.ReqLoginUserInfo;
 
 public interface UserService {
 
-    ResponseDto registerUser(Users users);
+    ResultInfo registerUser(Users users);
 
-    ResponseDto login(Users users);
+    ResultInfo login(ReqLoginUserInfo reqLogin);
 
-    ResponseDto validityUserName(String userName);
+    ResultInfo validityUserName(String userName);
 
-    ResponseDto selectAllUser(int page,int limit,String idOrName);
+    ResultInfo selectAllUser(int page,int limit,String idOrName);
 
-    ResponseDto updataUser(Users users);
+    ResultInfo updataUser(Users users);
 
-    ResponseDto createUser(Users users);
+    ResultInfo createUser(Users users);
 }

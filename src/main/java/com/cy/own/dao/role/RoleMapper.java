@@ -3,9 +3,11 @@ package com.cy.own.dao.role;
 import com.cy.own.entity.role.Role;
 import com.cy.own.entity.role.vo.RoleTreeVo;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public interface RoleMapper {
     int deleteByPrimaryKey(String id);
 

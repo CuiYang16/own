@@ -1,6 +1,5 @@
 package com.cy.own.service.role;
 
-import com.cy.own.dto.ResponseDto;
 import com.cy.own.entity.role.Role;
 import com.cy.own.entity.role.vo.RoleAddVo;
 

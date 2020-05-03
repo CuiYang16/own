@@ -1,9 +1,11 @@
 package com.cy.own.dao;
 
 import com.cy.own.entity.Permission;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public interface PermissionMapper {
     int deleteByPrimaryKey(String id);
 
