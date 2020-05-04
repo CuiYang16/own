@@ -30,11 +30,6 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleMapper roleMapper;
 
-    @Autowired
-    private Environment env;
-
-    private static final String RES_CODE = "code.role.";
-    private static final String RES_MSG = "code.msg.";
     Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 
     @Override

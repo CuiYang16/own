@@ -18,7 +18,7 @@ import java.util.List;
 
 @Builder
 @Data
-public class Users implements UserDetails {
+public class Users{
     /**
      *
      */
@@ -92,7 +92,6 @@ public class Users implements UserDetails {
     /**
      * 登录次数
      */
-
     private Integer loginCount;
 
 
@@ -101,42 +100,5 @@ public class Users implements UserDetails {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
-
-    private List<Role> roles;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.passWord;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.userName;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return this.accountNonExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return this.accountNonLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return this.credentialsNonExpired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.enabled;
-    }
 
 }

@@ -15,7 +15,6 @@ public class RoleTreeVo extends Role {
 
     private List<RoleTreeVo> children;
 
-
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

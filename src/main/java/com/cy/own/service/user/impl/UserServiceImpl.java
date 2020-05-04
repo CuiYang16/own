@@ -22,14 +22,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ *
+ * @author cuiyang
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UsersMapper usersMapper;
-
-    @Autowired
-    private Environment env;
 
     /**
      * 用户登录
@@ -47,7 +48,7 @@ public class UserServiceImpl implements UserService {
         if (!StrUtil.hasBlank(reqLogin.getUserName()) && !StrUtil.hasBlank(reqLogin.getPassWord())) {
             Users loginUser = usersMapper.selectByUserName(reqLogin.getUserName());
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            boolean pwMatches = passwordEncoder.matches(loginUser.getPassword(), reqLogin.getPassWord());
+            boolean pwMatches = passwordEncoder.matches(loginUser.getPassWord(), reqLogin.getPassWord());
             if (pwMatches && loginUser.getEnabled()) {
                 if (loginUser.getAccountNonLocked()) {
                     return ResultInfo.error().message("用户已锁定！");

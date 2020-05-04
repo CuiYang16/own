@@ -5,10 +5,10 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.20.RELEASE</version>
+        <version>2.1.11.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.cy</groupId>
+    <groupId>com.cy.own</groupId>
     <artifactId>own</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>own</name>
@@ -52,6 +52,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.47</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>

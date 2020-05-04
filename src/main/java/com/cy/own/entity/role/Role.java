@@ -11,11 +11,12 @@ import java.util.Date;
  * @author cuiyang
  */
 
-@Data
+
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role implements GrantedAuthority {
+public class Role{
     /**
      * 
      */
@@ -55,8 +56,9 @@ public class Role implements GrantedAuthority {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
-    @Override
+
     public String getAuthority() {
         return this.roleName;
     }
+
 }

@@ -81,4 +81,6 @@ public class ResultInfo {
         this.setSuccess(success);
         return this;
     }
+
+
 }

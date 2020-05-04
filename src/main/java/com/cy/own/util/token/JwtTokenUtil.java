@@ -131,6 +131,6 @@ public class JwtTokenUtil {
     public static Boolean validateToken(String token, UserDetails userDetails) {
         Users user = (Users) userDetails;
         String username = getUsernameFromToken(token);
-        return (username.equals(user.getUsername()) && !isTokenExpired(token));
+        return (username.equals(user.getUserName()) && !isTokenExpired(token));
     }
 }

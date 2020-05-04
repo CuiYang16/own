@@ -3,6 +3,7 @@ package com.cy.own.web.controller.user;
 import com.cy.own.dto.result.ResultInfo;
 import com.cy.own.model.users.ReqLoginUserInfo;
 import com.cy.own.service.user.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("/users")
+@Slf4j
 public class UserManageController {
 
     @Autowired
@@ -18,6 +20,7 @@ public class UserManageController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResultInfo userLogin(@RequestBody ReqLoginUserInfo reqLoginUserInfo){
+        log.debug(reqLoginUserInfo.toString());
         return userService.login(reqLoginUserInfo);
     }
 

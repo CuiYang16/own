@@ -1,6 +1,8 @@
 package com.cy.own.dto.result;
 
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author ：cuiyang

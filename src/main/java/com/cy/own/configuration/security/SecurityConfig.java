@@ -24,8 +24,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     AjaxAuthenticationEntryPoint authenticationEntryPoint;//未登陆时返回 JSON 格式的数据给前端（否则为 html）
 
-    @Autowired
-    AjaxAuthenticationSuccessHandler authenticationSuccessHandler; //登录成功返回的 JSON 格式数据给前端（否则为 html）
+    //@Autowired
+    //AjaxAuthenticationSuccessHandler authenticationSuccessHandler; //登录成功返回的 JSON 格式数据给前端（否则为 html）
 
     @Autowired
     AjaxAuthenticationFailureHandler authenticationFailureHandler; //登录失败返回的 JSON 格式数据给前端（否则为 html）
@@ -72,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //成功跳转路径必须真实存在
                 //.successForwardUrl("/forward/index")
-                .successHandler(authenticationSuccessHandler)
+                .successHandler(myAuthenticationSuccessHandler)
                 //失败跳转路径必须真实存在
                 .failureHandler(authenticationFailureHandler)
                 //.failureUrl("/forward/login")

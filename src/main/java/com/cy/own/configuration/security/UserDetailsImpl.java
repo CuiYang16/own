@@ -46,6 +46,8 @@ public class UserDetailsImpl implements UserDetailsService {
 
         if (StrUtil.isNotBlank(s)) {
             Users users = usersMapper.selectByUserName(s);
+
+            System.out.println(users.toString());
             if (users != null && users.getId() != null) {
                 List<Permission> permissions = permissionMapper.selectByUserId(users.getId());
                 List<Role> roles = roleMapper.selectByUserId(users.getId());
@@ -61,11 +63,11 @@ public class UserDetailsImpl implements UserDetailsService {
                         grantedAuthorities.add(new SimpleGrantedAuthority(permission.getPermissionName()));
                     }
                 });
-                return new User(users.getUsername(), users.getPassword(), users.getEnabled(), users.getAccountNonExpired(),
+                return new User(users.getUserName(), users.getPassWord(), users.getEnabled(), users.getAccountNonExpired(),
                         users.getCredentialsNonExpired(), users.getAccountNonLocked(), grantedAuthorities);
             } else {
 
-                throw new UsernameNotFoundException(users.getUsername() + " do not exist!");
+                throw new UsernameNotFoundException(users.getUserName() + " do not exist!");
             }
         } else {
             throw new UsernameNotFoundException(s + " do not exist!");
