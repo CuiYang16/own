@@ -1,4 +1,4 @@
-package com.cy.own.exception;
+package com.cy.own.common.exception;
 
 import com.cy.own.dto.result.ResultCodeEnum;
 import lombok.Data;

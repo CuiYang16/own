@@ -19,9 +19,6 @@ spring:
 
     basename: security/il8n/messages_zh_CN
     encoding: utf-8
-  thymeleaf:
-    cache: false
-    mode: LEGACYHTML5
   resources:
     static-locations: classpath:/
 #  mvc:

@@ -4,10 +4,10 @@ import lombok.*;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+/**
+ * @author cuiyang
+ */
+@Data
 @Builder
 public class RoleAddVo implements Serializable {
 

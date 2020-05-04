@@ -4,14 +4,18 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Date;
+/**
+ * @author cuiyang
+ */
+
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-public class Role {
+public class Role implements GrantedAuthority {
     /**
      * 
      */
@@ -49,5 +53,10 @@ public class Role {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    }
+
+    @Override
+    public String getAuthority() {
+        return this.roleName;
     }
 }

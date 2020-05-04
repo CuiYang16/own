@@ -1,18 +1,19 @@
 package com.cy.own.service.role;
 
+import com.cy.own.dto.result.ResultInfo;
 import com.cy.own.entity.role.Role;
 import com.cy.own.entity.role.vo.RoleAddVo;
 
 public interface RoleService {
     //table
-    ResponseDto getRoles(int page, int limit,String parentId,String idOrName);
+    ResultInfo getRoles(int page, int limit, String parentId, String idOrName);
     //tree
-    ResponseDto getRoles();
+    ResultInfo getRoles();
 
-    ResponseDto insertRole(RoleAddVo roleAddVo);
+    ResultInfo insertRole(RoleAddVo roleAddVo);
 
-    ResponseDto updateRole(Role role);
+    ResultInfo updateRole(Role role);
 
-    ResponseDto deleteRole(String id);
+    ResultInfo deleteRole(String id);
 }
 

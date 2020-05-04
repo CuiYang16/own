@@ -1,4 +1,4 @@
-package com.cy.own.exception;
+package com.cy.own.common.exception;
 
 import com.cy.own.dto.result.ResultCodeEnum;
 import com.cy.own.dto.result.ResultInfo;
@@ -17,16 +17,19 @@ import org.springframework.web.client.HttpClientErrorException;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    /**-------- 通用异常处理方法 --------**/
+    /**
+     * -------- 通用异常处理方法 --------
+     **/
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResultInfo error(Exception e) {
-        // e.printStackTrace();
         log.error(ExceptionUtil.getMessage(e));
         return ResultInfo.error();
     }
 
-    /**-------- 指定异常处理方法 --------**/
+    /**
+     * -------- 指定异常处理方法 --------
+     **/
     @ExceptionHandler(NullPointerException.class)
     @ResponseBody
     public ResultInfo error(NullPointerException e) {
@@ -41,11 +44,20 @@ public class GlobalExceptionHandler {
         return ResultInfo.setResult(ResultCodeEnum.HTTP_CLIENT_ERROR);
     }
 
-    /**-------- 自定义定异常处理方法 --------**/
+    @ExceptionHandler(RRException.class)
+    @ResponseBody
+    public ResultInfo error(RRException e) {
+        e.printStackTrace();
+        return ResultInfo.setResult(ResultCodeEnum.XSS_ERROR);
+    }
+
+    /**
+     * -------- 自定义定异常处理方法 --------
+     **/
     @ExceptionHandler(CMSException.class)
     @ResponseBody
     public ResultInfo error(CMSException e) {
         e.printStackTrace();
-        return ResultInfo.error().message(e.getMessage()).code(e.getCode());
+        return ResultInfo.error().message(e.getMessage());
     }
 }

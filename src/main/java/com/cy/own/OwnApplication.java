@@ -5,6 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
+/**
+ * @author cuiyang
+ */
 @SpringBootApplication
 @MapperScan(basePackages = "com.cy.own.dao")
 public class OwnApplication {

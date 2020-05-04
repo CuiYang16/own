@@ -1,5 +1,6 @@
 package com.cy.own.configuration.security;
 
+import cn.hutool.core.util.StrUtil;
 import com.cy.own.dao.PermissionMapper;
 import com.cy.own.dao.role.RoleMapper;
 import com.cy.own.dao.user.UsersMapper;
@@ -41,28 +42,33 @@ public class UserDetailsImpl implements UserDetailsService {
     //private static Log logger = LogFactory.getLog(UserDetailsImpl.class);
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        logger.info(s+"正在登录。。。。。。");
-        Users users = usersMapper.selectByUserName(s);
-        if (users != null && users.getId() != null) {
-            List<Permission> permissions = permissionMapper.selectByUserId(users.getId());
-            List<Role> roles = roleMapper.selectByUserId(users.getId());
-            List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        logger.info(s + "正在登录。。。。。。");
 
-            roles.forEach(role -> {
-                if (role != null && role.getRoleName() != null) {
-                    //角色名需要加ROLE_前缀
-                    grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleCode()));
-                }
-            });
-            permissions.forEach(permission -> {
-                if (permission != null && permission.getPermissionName() != null) {
-                    grantedAuthorities.add(new SimpleGrantedAuthority(permission.getPermissionName()));
-                }
-            });
-            logger.info("name:"+users.getUserName());
-            return new User(users.getUserName(), users.getPassWord(), users.getEnabled(), users.getAccountNonExpired(), users.getCredentialsNonExpired(), users.getAccountNonLocked(), grantedAuthorities);
-        }else{
-            throw new UsernameNotFoundException(users.getUserName() + " do not exist!");
+        if (StrUtil.isNotBlank(s)) {
+            Users users = usersMapper.selectByUserName(s);
+            if (users != null && users.getId() != null) {
+                List<Permission> permissions = permissionMapper.selectByUserId(users.getId());
+                List<Role> roles = roleMapper.selectByUserId(users.getId());
+                List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+                roles.forEach(role -> {
+                    if (role != null && role.getRoleName() != null) {
+                        //角色名需要加ROLE_前缀
+                        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
+                    }
+                });
+                permissions.forEach(permission -> {
+                    if (permission != null && permission.getPermissionName() != null) {
+                        grantedAuthorities.add(new SimpleGrantedAuthority(permission.getPermissionName()));
+                    }
+                });
+                return new User(users.getUsername(), users.getPassword(), users.getEnabled(), users.getAccountNonExpired(),
+                        users.getCredentialsNonExpired(), users.getAccountNonLocked(), grantedAuthorities);
+            } else {
+
+                throw new UsernameNotFoundException(users.getUsername() + " do not exist!");
+            }
+        } else {
+            throw new UsernameNotFoundException(s + " do not exist!");
         }
 
     }

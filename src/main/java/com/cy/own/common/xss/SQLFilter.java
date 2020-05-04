@@ -1,5 +1,6 @@
 package com.cy.own.common.xss;
 
+import com.cy.own.common.exception.RRException;
 import org.apache.commons.lang3.StringUtils;
 
 public class SQLFilter {

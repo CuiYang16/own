@@ -1,6 +1,7 @@
 package com.cy.own.service.role.impl;
 
 import com.cy.own.dao.role.RoleMapper;
+import com.cy.own.dto.result.ResultInfo;
 import com.cy.own.entity.role.Role;
 import com.cy.own.entity.role.vo.RoleAddVo;
 import com.cy.own.entity.role.vo.RoleTreeVo;
@@ -8,6 +9,7 @@ import com.cy.own.service.role.RoleService;
 import com.cy.own.util.UUIDutil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author cuiyang
+ */
 @Service
+@Slf4j
 public class RoleServiceImpl implements RoleService {
 
     @Autowired
@@ -32,7 +38,7 @@ public class RoleServiceImpl implements RoleService {
     Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 
     @Override
-    public ResponseDto insertRole(RoleAddVo roleAddVo) {
+    public ResultInfo insertRole(RoleAddVo roleAddVo) {
         Role role = Role.builder().roleName(roleAddVo.getRoleName()).description(roleAddVo.getDescription())
                 .isDisabled(roleAddVo.getIsDisabled()).roleLevel(roleAddVo.getLevel() + 1)
                 .parentId(roleAddVo.getParentId()).roleCode(roleAddVo.getRoleCode()).id(UUIDutil.getUUID()).createTime(new Date()).build();
@@ -41,68 +47,55 @@ public class RoleServiceImpl implements RoleService {
         } else if ("children".equalsIgnoreCase(roleAddVo.getAddType())) {
             role.setRoleLevel(roleAddVo.getLevel() + 1);
         } else {
-            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "insert_role_fail"), 52003)).msg(env.getProperty(RES_MSG + "insert_role_fail", "新增失败，请刷新重试！"))
-                    .build();
+            return ResultInfo.error().message("插入角色异常！");
         }
 
         try {
             int insertSelective = roleMapper.insertSelective(role);
-            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "insert_role", "22003"))).msg(env.getProperty(RES_MSG + "insert_role", "新增成功！"))
-                    .resObj(role).build();
+            return ResultInfo.ok().message("插入角色成功！");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "insert_role_fail", "52003"))).msg(env.getProperty(RES_MSG + "insert_role_fail", "新增失败，请刷新重试！"))
-                    .build();
+            return ResultInfo.error().message("插入角色异常！");
         }
     }
 
     @Override
-    public ResponseDto getRoles(int page, int limit, String parentId, String idOrName) {
+    public ResultInfo getRoles(int page, int limit, String parentId, String idOrName) {
 
         try {
             PageHelper.startPage(page, limit);
             List<Role> roles = roleMapper.selectAllRoles(parentId, idOrName);
             PageInfo<Role> pageInfo = new PageInfo<>(roles);
-            ResponseDto dto = ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "select_table_role", "22002")))
-                    .msg(env.getProperty(RES_MSG + "select_table_role", "查询成功")).count((int) pageInfo.getTotal())
-                    .data(roles).build();
-            return dto;
+
+            return ResultInfo.ok().data("count",(int) pageInfo.getTotal()).data("roles",roles).message("查询角色成功！");
         } catch (Exception e) {
             e.printStackTrace();
-            ResponseDto dto = ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "select_table_role_fail", "52002")))
-                    .msg(env.getProperty(RES_MSG + "select_table_role_fail", "查询失败，请刷新重试！")).count(0)
-                    .build();
-            return dto;
+            return ResultInfo.error().data("count",0).message("查询角色失败！");
         }
     }
 
     @Override
-    public ResponseDto getRoles() {
+    public ResultInfo getRoles() {
         try {
             List<RoleTreeVo> roles = roleMapper.getRoles(null);
-            ResponseDto dto = ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "select_tree_role", "22001")))
-                    .msg(env.getProperty(RES_MSG + "select_tree_role", "查询成功"))
-                    .data(roles).build();
-            return dto;
+            return ResultInfo.ok().data("roles",roles).message("查询树形角色成功！");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "select_tree_role_fail", "52001")))
-                    .msg(env.getProperty(RES_MSG + "select_tree_role_fail", "树形查讯失败"))
-                    .data(null).build();
+            return ResultInfo.error().data("count",0).message("查询树形角色失败！");
         }
 
     }
 
     @Override
-    public ResponseDto updateRole(Role role) {
+    public ResultInfo updateRole(Role role) {
 
         try {
             logger.info(role.toString());
             int update = roleMapper.updateByPrimaryKeySelective(role);
-            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "update_role", "22004"))).msg(env.getProperty(RES_MSG + "update_role", "编辑角色信息成功！")).build();
+            return ResultInfo.ok().message("更新角色成功！");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "update_role_fail", "52004"))).msg(env.getProperty(RES_MSG + "update_role_fail", "编辑角色信息失败，请刷新重试！")).build();
+            return ResultInfo.error().data("count",0).message("更新角色失败！");
         }
 
     }
@@ -114,17 +107,17 @@ public class RoleServiceImpl implements RoleService {
      * @return
      */
     @Override
-    public ResponseDto deleteRole(String id) {
+    public ResultInfo deleteRole(String id) {
         List<RoleTreeVo> roles = roleMapper.getRoles(id);
         List<String> ids = new ArrayList<>();
         ids.add(id);
         this.resursionTree(roles, ids);
         try {
             roleMapper.delRoles(ids);
-            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "del_role", "22005"))).msg(env.getProperty(RES_MSG + "del_role", "删除成功！")).data(ids).build();
+            return ResultInfo.ok().message("删除角色成功！");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.builder().code(Integer.valueOf(env.getProperty(RES_CODE + "del_role_fail", "52005"))).msg(env.getProperty(RES_MSG + "del_role_fail", "删除失败，请刷新重试！")).build();
+            return ResultInfo.error().data("count",0).message("删除角色失败！");
         }
 
     }

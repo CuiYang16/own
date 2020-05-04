@@ -1,4 +1,4 @@
-package com.cy.own.exception;
+package com.cy.own.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 

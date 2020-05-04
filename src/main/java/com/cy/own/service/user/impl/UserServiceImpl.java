@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
         if (!StrUtil.hasBlank(reqLogin.getUserName()) && !StrUtil.hasBlank(reqLogin.getPassWord())) {
             Users loginUser = usersMapper.selectByUserName(reqLogin.getUserName());
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            boolean pwMatches = passwordEncoder.matches(loginUser.getPassWord(), reqLogin.getPassWord());
+            boolean pwMatches = passwordEncoder.matches(loginUser.getPassword(), reqLogin.getPassWord());
             if (pwMatches && loginUser.getEnabled()) {
                 if (loginUser.getAccountNonLocked()) {
                     return ResultInfo.error().message("用户已锁定！");
